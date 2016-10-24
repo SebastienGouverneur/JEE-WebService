@@ -1,6 +1,6 @@
-package src.main.webapp;
+package bean;
 
-public class PersonBean {
+public class Person {
 	
 	private int id;
 	private String nom;
@@ -8,8 +8,12 @@ public class PersonBean {
 	private String email;
 	private String siteweb;
 	private String dateNaissance;
-	private GroupBean groupe;
+	private Group groupe;
 	
+	
+	public Person(){
+		
+	}
 	
 	public int getId() {
 		return id;
@@ -59,10 +63,10 @@ public class PersonBean {
 		this.dateNaissance = dateNaissance;
 	}
 	
-	public GroupBean getGroupe() {
+	public Group getGroupe() {
 		return groupe;
 	}
-	public void setGroupe(GroupBean groupe) {
+	public void setGroupe(Group groupe) {
 		this.groupe = groupe;
 	}
 	

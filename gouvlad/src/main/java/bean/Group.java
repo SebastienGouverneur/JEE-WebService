@@ -1,13 +1,18 @@
-package src.main.webapp;
+package bean;
 
 import java.util.List;
 
 
-public class GroupBean {
+public class Group {
 	
 	private int id;
 	private String monGroupe;
-	private List<PersonBean> listPerson;
+	private List<Person> listPerson;
+	
+	public Group(){
+		
+	}
+	
 	public int getId() {
 		return id;
 	}
@@ -20,10 +25,10 @@ public class GroupBean {
 	public void setMonGroupe(String monGroupe) {
 		this.monGroupe = monGroupe;
 	}
-	public List<PersonBean> getListPerson() {
+	public List<Person> getListPerson() {
 		return listPerson;
 	}
-	public void setListPerson(List<PersonBean> listPerson) {
+	public void setListPerson(List<Person> listPerson) {
 		this.listPerson = listPerson;
 	}
 

@@ -11,8 +11,8 @@
     <context:annotation-config />
     
     <!-- pour décrire les classes à instancier -->
-    <context:component-scan base-package="src.main.java.dao" />
-    <context:component-scan base-package="src.main.java.dao.impl" />
+    <context:component-scan base-package="dao" />
+    <context:component-scan base-package="dao.impl" />
 
 
 </beans>

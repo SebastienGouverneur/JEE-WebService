@@ -17,6 +17,10 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+<<<<<<< HEAD
+=======
+	<classpathentry excluding="main/java/|main/resources/|test/java/" kind="src" path="src"/>
+>>>>>>> branch 'master' of https://github.com/SebastienGouverneur/JEE-WebService.git
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>

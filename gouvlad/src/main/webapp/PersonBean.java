@@ -1,3 +1,4 @@
+package src.main.webapp;
 
 public class PersonBean {
 	

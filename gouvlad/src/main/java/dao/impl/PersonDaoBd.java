@@ -24,9 +24,9 @@ import dao.IPersonDao;
 public class PersonDaoBd implements IPersonDao {
 	
 	private String driverName = "com.mysql.jdbc.Driver";
-	private String url      = "jdbc:mysql://db4free.net/jeegouvlad";
-	private String user     = "webservice";
-	private String password = "jeewebservice";
+	private String url      = "jdbc:mysql://dbs-perso.luminy.univmed.fr/l1103983";
+	private String user     = "l1103983";
+	private String password = "NbDUs8";
 	private Connection connection;
 	
 	@Autowired
@@ -44,12 +44,20 @@ public class PersonDaoBd implements IPersonDao {
 		return null;
 	}
 
-	public List<Person> findAllPersons() throws SQLException {
+	public List<Person> findAllPersons() throws SQLException{
+		return findAllPersons("Personne");
+	}
+	
+	public List<Person> findAllPersons(boolean test) throws SQLException {
+		return findAllPersons("PersonneTest");
+	}
+	
+	public List<Person> findAllPersons(String tableName) throws SQLException {
 		
-		SimpleDateFormat df = new SimpleDateFormat("dd MMM yyyy");
+		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		List<Person> personList = new LinkedList<Person>();
 		Statement st = connection.createStatement();
-		ResultSet rs = st.executeQuery("SELECT * FROM Personne");
+		ResultSet rs = st.executeQuery("SELECT * FROM "+tableName+" ORDER BY id-personne");
 		while (rs.next()){
 			Person p = personFactory.getPerson();
 			p.setId(rs.getInt(1));

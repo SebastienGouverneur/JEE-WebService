@@ -12,6 +12,7 @@ public interface IPersonDao {
 	
 	Collection<Group> findAllGroups();
 	List<Person> findAllPersons() throws SQLException;
+	List<Person> findAllPersons(boolean test) throws SQLException;
 	Person findPerson(int id);
 	void savePerson(Person person);
 	void saveGroup(Group group);

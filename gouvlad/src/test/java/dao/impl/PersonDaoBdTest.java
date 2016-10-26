@@ -28,9 +28,9 @@ public class PersonDaoBdTest {
 	
 	@Test
 	public void test() {
-		System.out.println("coucou");
-		//Assert.assertNotNull(dao);
-		//Assert.assertNotNull(dao.getConnection());
+		
+		Assert.assertNotNull(dao);
+		Assert.assertNotNull(dao.getConnection());
 		
 		Person p1 = personFactory.getPerson();
 		Person p2 = personFactory.getPerson();

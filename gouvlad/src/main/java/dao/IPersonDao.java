@@ -1,5 +1,6 @@
 package dao;
 
+import java.sql.Connection;
 import java.util.Collection;
 
 import bean.Person;
@@ -12,5 +13,5 @@ public interface IPersonDao {
 	Person findPerson(int id);
 	void savePerson(Person person);
 	void saveGroup(Group group);
-
+	Connection getConnection();
 }

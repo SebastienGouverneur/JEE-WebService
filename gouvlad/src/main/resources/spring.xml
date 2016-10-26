@@ -13,6 +13,13 @@
     <!-- pour décrire les classes à instancier -->
     <context:component-scan base-package="dao" />
     <context:component-scan base-package="dao.impl" />
+    <context:component-scan base-package="bean" />
+    <context:component-scan base-package="bean.impl" />
+
+  	<bean name="personFactory" class="bean.Person" scope="prototype"/>
+	<bean name="IPersonFactory" class="bean.impl.PersonFactory">
+    	<lookup-method bean="personFactory" name="getPerson" />
+	</bean>
 
 
 </beans>

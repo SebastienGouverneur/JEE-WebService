@@ -7,18 +7,20 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-
-
+import bean.Group;
+import bean.IGroupFactory;
 import bean.IPersonFactory;
 import bean.Person;
 import dao.IPersonDao;
@@ -31,27 +33,53 @@ public class PersonDaoBdTest {
 	@Autowired
 	IPersonDao dao;
 	
+	
 	@Autowired
 	IPersonFactory personFactory;
 	
-	/*TODO: externaliser PersonneTest*/
+	@Autowired
+	IGroupFactory groupFactory;
+	
+	@Before
+	public void clearTestTables() throws SQLException{
+		clearTable(Resources.getString("KeyPersonTest"));
+		clearTable(Resources.getString("KeyBelongTest"));
+		clearTable(Resources.getString("KeyGroupTest"));
+	}
+	
 	private void insertPerson(Person person) throws SQLException, ParseException{
-		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		PreparedStatement st = dao.getConnection().prepareStatement("INSERT INTO "+"PersonneTest"+" VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
+		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy"); 
+		PreparedStatement st = dao.getConnection().prepareStatement("INSERT INTO "+Resources.getString("KeyPersonTest")+" VALUES(?, ?, ?, ?, ?, ?, ?, ?)"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		st.setInt(1, person.getId());
 		st.setString(2, person.getNom());
 		st.setString(3, person.getPrenom());
 		st.setString(4, person.getEmail());
 		st.setString(5,  person.getSiteweb());
 		st.setDate(6, new java.sql.Date(df.parse(person.getDateNaissance()).getTime()));
-		st.setString(7, "0000000000000000000000000000000000000000000000000000000000000000");
-		st.setString(8, "12345678");
+		st.setString(7, "0000000000000000000000000000000000000000000000000000000000000000"); 
+		st.setString(8, "12345678"); 
 		st.execute();
 	}
 	
-	private void dropTable(String tableName) throws SQLException{
+	private void insertGroup(Group group) throws SQLException, ParseException{
+		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy"); 
+		PreparedStatement st = dao.getConnection().prepareStatement("INSERT INTO "+Resources.getString("KeyGroupTest")+" VALUES(?, ?)");
+		st.setInt(1, group.getId());
+		st.setString(2, group.getNomGroupe());
+		st.execute();
+		if (group.getListPerson() == null)
+			return;
+		for (Person p : group.getListPerson()) {
+			PreparedStatement st1 = dao.getConnection().prepareStatement("INSERT INTO "+Resources.getString("KeyBelongTest")+" VALUES(?, ?)");
+			st1.setInt(1, group.getId());
+			st1.setInt(2, p.getId());
+			st1.execute();
+		}
+	}
+	
+	private void clearTable(String tableName) throws SQLException{
 		Statement st = dao.getConnection().createStatement();
-		st.execute("DELETE FROM "+tableName);
+		st.execute("DELETE FROM "+tableName); 
 	}
 	
 	@Test
@@ -65,20 +93,19 @@ public class PersonDaoBdTest {
 		Person p1 = personFactory.getPerson();
 		Person p2 = personFactory.getPerson();
 		
-		/*TODO: Mocker*/
 		p1.setId(1);
-		p1.setNom("Gouverneur");
-		p1.setPrenom("Sébastien");
-		p1.setEmail("seb@gouv.com");
-		p1.setDateNaissance("28/09/1991");
-		p1.setSiteweb("http://sebgouv.com");
+		p1.setNom("Gouverneur"); 
+		p1.setPrenom("Sébastien"); 
+		p1.setEmail("seb@gouv.com"); 
+		p1.setDateNaissance("28/09/1991"); 
+		p1.setSiteweb("http://sebgouv.com"); 
 		
 		p2.setId(2);
-		p2.setNom("Ladet");
-		p2.setPrenom("Gabriel");
+		p2.setNom("Ladet"); 
+		p2.setPrenom("Gabriel"); 
 		p2.setEmail("gabriel@ladet.net");
-		p2.setDateNaissance("22/02/1993");
-		p2.setSiteweb("http://ladet.net");
+		p2.setDateNaissance("22/02/1993"); 
+		p2.setSiteweb("http://ladet.net"); 
 		
 		insertPerson(p1);
 		insertPerson(p2);
@@ -88,17 +115,69 @@ public class PersonDaoBdTest {
 		assertEquals(listPerson.size(), 2);
 		
 		assertEquals(listPerson.get(0).getId(), 1);
-		assertEquals(listPerson.get(0).getNom(), "Gouverneur");
-		assertEquals(listPerson.get(0).getPrenom(), "Sébastien");
+		assertEquals(listPerson.get(0).getNom(), "Gouverneur"); 
+		assertEquals(listPerson.get(0).getPrenom(), "Sébastien"); 
 		
 		assertEquals(listPerson.get(1).getId(), 2);
-		assertEquals(listPerson.get(1).getNom(), "Ladet");
-		assertEquals(listPerson.get(1).getPrenom(), "Gabriel");
+		assertEquals(listPerson.get(1).getNom(), "Ladet"); 
+		assertEquals(listPerson.get(1).getPrenom(), "Gabriel"); 
 	}
 	
-	@After
-	public void clearTestTables() throws SQLException{
-		dropTable("PersonneTest");
+	@Test(timeout = 1000)
+	public void testFindAllGroups() throws SQLException, ParseException {
+		
+		Group g1 = groupFactory.getGroup();
+		Group g2 = groupFactory.getGroup();
+		Group g3 = groupFactory.getGroup();
+		
+		Person p1 = personFactory.getPerson();
+		Person p2 = personFactory.getPerson();
+		
+		LinkedList<Person> listPerson1 = new LinkedList<Person>();
+		LinkedList<Person> listPerson2 = new LinkedList<Person>();
+		
+		listPerson1.add(p1);
+		listPerson2.add(p2);
+		
+		g1.setId(1);
+		g1.setListPerson(listPerson1);
+		g1.setNomGroupe("FSI");
+		
+		g2.setId(2);
+		g2.setListPerson(listPerson2);
+		g2.setNomGroupe("ISL");
+		
+		g3.setId(1);
+		g3.setNomGroupe("ID");
+		
+		p1.setId(1);
+		p1.setNom("Gouverneur"); 
+		p1.setPrenom("Sébastien"); 
+		p1.setEmail("seb@gouv.com"); 
+		p1.setDateNaissance("28/09/1991"); 
+		p1.setSiteweb("http://sebgouv.com"); 
+		
+		p2.setId(2);
+		p2.setNom("Ladet"); 
+		p2.setPrenom("Gabriel"); 
+		p2.setEmail("gabriel@ladet.net");
+		p2.setDateNaissance("22/02/1993"); 
+		p2.setSiteweb("http://ladet.net"); 
+		
+		insertPerson(p1);
+		insertPerson(p2);
+		
+		insertGroup(g1);
+		insertGroup(g2);
+		insertGroup(g3);
+		
+	List<Group> listGroup = dao.findAllGroups(true);
+		
+		assertEquals(listGroup.size(), 3);
+		
+		
 	}
+	
+
 
 }

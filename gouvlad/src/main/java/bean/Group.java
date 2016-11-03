@@ -6,7 +6,7 @@ import java.util.List;
 public class Group {
 	
 	private int id;
-	private String monGroupe;
+	private String nomGroupe;
 	private List<Person> listPerson;
 	
 	public Group(){
@@ -19,11 +19,11 @@ public class Group {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public String getMonGroupe() {
-		return monGroupe;
+	public String getNomGroupe() {
+		return nomGroupe;
 	}
-	public void setMonGroupe(String monGroupe) {
-		this.monGroupe = monGroupe;
+	public void setNomGroupe(String monGroupe) {
+		this.nomGroupe = monGroupe;
 	}
 	public List<Person> getListPerson() {
 		return listPerson;

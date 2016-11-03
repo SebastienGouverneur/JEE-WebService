@@ -10,7 +10,8 @@ import bean.Group;
 
 public interface IPersonDao {
 	
-	Collection<Group> findAllGroups();
+	List<Group> findAllGroups(boolean test) throws SQLException;
+	List<Group> findAllGroups() throws SQLException;
 	List<Person> findAllPersons() throws SQLException;
 	List<Person> findAllPersons(boolean test) throws SQLException;
 	Person findPerson(int id);

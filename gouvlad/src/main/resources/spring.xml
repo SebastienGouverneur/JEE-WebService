@@ -20,6 +20,11 @@
 	<bean name="IPersonFactory" class="bean.impl.PersonFactory">
     	<lookup-method bean="personFactory" name="getPerson" />
 	</bean>
+	
+	<bean name="groupFactory" class="bean.Group" scope="prototype"/>
+	<bean name="IGroupFactory" class="bean.impl.GroupFactory">
+    	<lookup-method bean="groupFactory" name="getGroup" />
+	</bean>
 
 
 </beans>

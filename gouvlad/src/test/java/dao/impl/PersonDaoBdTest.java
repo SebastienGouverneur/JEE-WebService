@@ -49,7 +49,7 @@ public class PersonDaoBdTest {
 	
 	private void insertPerson(Person person) throws SQLException, ParseException{
 		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy"); 
-		PreparedStatement st = dao.getConnection().prepareStatement("INSERT INTO "+Resources.getString("KeyPersonTest")+" VALUES(?, ?, ?, ?, ?, ?, ?, ?)"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		PreparedStatement st = dao.getConnection().prepareStatement("INSERT INTO "+Resources.getString("KeyPersonTest")+" VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
 		st.setInt(1, person.getId());
 		st.setString(2, person.getNom());
 		st.setString(3, person.getPrenom());
@@ -62,13 +62,13 @@ public class PersonDaoBdTest {
 	}
 	
 	private void insertGroup(Group group) throws SQLException, ParseException{
-		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy"); 
 		PreparedStatement st = dao.getConnection().prepareStatement("INSERT INTO "+Resources.getString("KeyGroupTest")+" VALUES(?, ?)");
 		st.setInt(1, group.getId());
 		st.setString(2, group.getNomGroupe());
 		st.execute();
-		if (group.getListPerson() == null)
+		if (group.getListPerson() == null) {
 			return;
+		}
 		for (Person p : group.getListPerson()) {
 			PreparedStatement st1 = dao.getConnection().prepareStatement("INSERT INTO "+Resources.getString("KeyBelongTest")+" VALUES(?, ?)");
 			st1.setInt(1, group.getId());
@@ -123,7 +123,7 @@ public class PersonDaoBdTest {
 		assertEquals(listPerson.get(1).getPrenom(), "Gabriel"); 
 	}
 	
-	@Test(timeout = 1000)
+	@Test(timeout = 5000)
 	public void testFindAllGroups() throws SQLException, ParseException {
 		
 		Group g1 = groupFactory.getGroup();
@@ -147,7 +147,7 @@ public class PersonDaoBdTest {
 		g2.setListPerson(listPerson2);
 		g2.setNomGroupe("ISL");
 		
-		g3.setId(1);
+		g3.setId(3);
 		g3.setNomGroupe("ID");
 		
 		p1.setId(1);
@@ -171,7 +171,7 @@ public class PersonDaoBdTest {
 		insertGroup(g2);
 		insertGroup(g3);
 		
-	List<Group> listGroup = dao.findAllGroups(true);
+		List<Group> listGroup = dao.findAllGroups(true);
 		
 		assertEquals(listGroup.size(), 3);
 		

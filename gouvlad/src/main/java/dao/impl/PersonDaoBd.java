@@ -46,13 +46,13 @@ public class PersonDaoBd implements IPersonDao {
 	public List<Group> findAllGroups() throws SQLException{
 		return findAllGroups(Resources.getString("KeyGroup"),
 				Resources.getString("KeyBelong"), 
-				Resources.getString("Person"));
+				Resources.getString("KeyPerson"));
 	}
 	
 	public List<Group> findAllGroups(boolean test) throws SQLException {
 		return findAllGroups(Resources.getString("KeyGroupTest"), 
 				Resources.getString("KeyBelongTest"), 
-				Resources.getString("PersonTest"));
+				Resources.getString("KeyPersonTest"));
 	}
 
 	public List<Group> findAllGroups(String tableNameGroup, 
@@ -62,20 +62,18 @@ public class PersonDaoBd implements IPersonDao {
 		List<Group> groupList = new LinkedList<Group>();
 		HashMap<Integer, Group> mapGroup = new HashMap<Integer, Group>();
 		Statement st = connection.createStatement();
-		ResultSet rs = st.executeQuery("SELECT * FROM "+tableNameGroup+" AS group LEFT OUTER JOIN "+tableNameBelongGroupPerson
-				+" AS belong ON group.id-groupe = belong.id-groupe INNER JOIN "+tableNamePerson+" AS person "
-						+ " ON belong.id-personne = person.id-personne  ORDER BY `id-groupe`");
-		
+		ResultSet rs = st.executeQuery("SELECT * FROM "+tableNameGroup+" AS groupe LEFT OUTER JOIN "+tableNameBelongGroupPerson+" AS belong"
+						+ " ON groupe.`id-groupe`=belong.`id-groupe` INNER JOIN "+tableNamePerson+" AS person"
+						+ " ON belong.`id-personne`=person.`id-personne` ORDER BY groupe.`id-groupe`");
 		while (rs.next()){
 			Group g;
-			if (mapGroup.containsKey(rs.getInt("group.id-groupe"))){
-				g = mapGroup.get(rs.getInt("group.id-groupe"));
-
+			if (mapGroup.containsKey(rs.getInt("groupe.id-groupe"))){
+				g = mapGroup.get(rs.getInt("groupe.id-groupe"));
 			}
 			else {
 				g = groupFactory.getGroup();
-				g.setId(rs.getInt("group.id-groupe"));
-				g.setNomGroupe(rs.getString("group.nom-groupe"));
+				g.setId(rs.getInt("groupe.id-groupe"));
+				g.setNomGroupe(rs.getString("groupe.nom-groupe"));
 				mapGroup.put(g.getId(), g);
 				groupList.add(g);
 			}

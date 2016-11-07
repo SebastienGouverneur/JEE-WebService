@@ -64,7 +64,7 @@ public class PersonDaoBd implements IPersonDao {
 		Statement st = connection.createStatement();
 		ResultSet rs = st.executeQuery("SELECT * FROM "+tableNameGroup+" AS groupe LEFT OUTER JOIN "+tableNameBelongGroupPerson+" AS belong"
 						+ " ON groupe.`id-groupe`=belong.`id-groupe` LEFT OUTER JOIN "+tableNamePerson+" AS person"
-						+ " ON belong.`id-personne`=person.`id-personne` ORDER BY groupe.`id-groupe`");
+						+ " ON belong.`id-personne`=person.`id-personne` ORDER BY groupe.`id-groupe`, person.`id-personne`");
 		while (rs.next()){
 			Group g;
 			if (mapGroup.containsKey(rs.getInt("groupe.id-groupe"))){
@@ -80,11 +80,13 @@ public class PersonDaoBd implements IPersonDao {
 			
 			if (rs.getObject("person.id-personne") != null){
 				Person p = personFactory.getPerson();
+				p.setId(rs.getInt("person.id-personne"));
 				p.setNom(rs.getString("person.nom"));
 				p.setPrenom(rs.getString("person.prenom"));
 				p.setEmail(rs.getString("person.email"));
 				p.setSiteweb(rs.getString("person.url-web"));
 				p.setDateNaissance(df.format(rs.getDate("person.date-naissance")));
+				p.setGroupe(g);
 				g.getListPerson().add(p);
 			}
 			

@@ -71,8 +71,8 @@ public class PersonDaoBdTest {
 		}
 		for (Person p : group.getListPerson()) {
 			PreparedStatement st1 = dao.getConnection().prepareStatement("INSERT INTO "+Resources.getString("KeyBelongTest")+" VALUES(?, ?)");
-			st1.setInt(1, group.getId());
-			st1.setInt(2, p.getId());
+			st1.setInt(1, p.getId());
+			st1.setInt(2, group.getId());
 			st1.execute();
 		}
 	}
@@ -123,7 +123,7 @@ public class PersonDaoBdTest {
 		assertEquals(listPerson.get(1).getPrenom(), "Gabriel"); 
 	}
 	
-	@Test(timeout = 5000)
+	@Test(timeout = 10000)
 	public void testFindAllGroups() throws SQLException, ParseException {
 		
 		Group g1 = groupFactory.getGroup();
@@ -132,17 +132,19 @@ public class PersonDaoBdTest {
 		
 		Person p1 = personFactory.getPerson();
 		Person p2 = personFactory.getPerson();
+		Person p3 = personFactory.getPerson();
 		
 		
 	
 		
 		g1.setId(1);
 		g1.getListPerson().add(p1);
-		g1.setNomGroupe("FSI");
+		g1.setNomGroupe("ISL");
 		
 		g2.setId(2);
 		g2.getListPerson().add(p2);
-		g2.setNomGroupe("ISL");
+		g2.getListPerson().add(p3);
+		g2.setNomGroupe("FSI");
 		
 		g3.setId(3);
 		g3.setNomGroupe("ID");
@@ -161,8 +163,17 @@ public class PersonDaoBdTest {
 		p2.setDateNaissance("22/02/1993"); 
 		p2.setSiteweb("http://ladet.net"); 
 		
+		p3.setId(3);
+		p3.setNom("Bond"); 
+		p3.setPrenom("James"); 
+		p3.setEmail("jamesbond@mi6.com");
+		p3.setDateNaissance("11/09/1920"); 
+		p3.setSiteweb("http://bond.com"); 
+		
 		insertPerson(p1);
 		insertPerson(p2);
+		insertPerson(p3);
+
 		
 		insertGroup(g1);
 		insertGroup(g2);
@@ -171,6 +182,51 @@ public class PersonDaoBdTest {
 		List<Group> listGroup = dao.findAllGroups(true);
 		
 		assertEquals(3, listGroup.size());
+		
+		/* Test first group */
+		
+		g1 = ((LinkedList<Group>) listGroup).pop();
+		assertEquals(1, g1.getId());
+		assertEquals("ISL", g1.getNomGroupe());
+		assertEquals(1, g1.getListPerson().size());
+		assertEquals(1, g1.getListPerson().get(0).getId());
+		assertEquals("Gouverneur", g1.getListPerson().get(0).getNom());
+		assertEquals("Sébastien", g1.getListPerson().get(0).getPrenom());
+		assertEquals("seb@gouv.com", g1.getListPerson().get(0).getEmail());
+		assertEquals("http://sebgouv.com", g1.getListPerson().get(0).getSiteweb());
+		assertEquals("28/09/1991",g1.getListPerson().get(0).getDateNaissance());
+		assertEquals(g1, g1.getListPerson().get(0).getGroupe());
+
+
+		/* Test second group */
+		
+		g1 = ((LinkedList<Group>) listGroup).pop();
+		assertEquals(2, g1.getId());
+		assertEquals("FSI", g1.getNomGroupe());
+		assertEquals(2, g1.getListPerson().size());
+		assertEquals(2, g1.getListPerson().get(0).getId());
+		assertEquals("Ladet", g1.getListPerson().get(0).getNom());
+		assertEquals("Gabriel", g1.getListPerson().get(0).getPrenom());
+		assertEquals("gabriel@ladet.net", g1.getListPerson().get(0).getEmail());
+		assertEquals("http://ladet.net", g1.getListPerson().get(0).getSiteweb());
+		assertEquals("22/02/1993",g1.getListPerson().get(0).getDateNaissance());
+		assertEquals(g1, g1.getListPerson().get(0).getGroupe());
+		
+		
+		assertEquals(3, g1.getListPerson().get(1).getId());
+		assertEquals("Bond", g1.getListPerson().get(1).getNom());
+		assertEquals("James", g1.getListPerson().get(1).getPrenom());
+		assertEquals("jamesbond@mi6.com", g1.getListPerson().get(1).getEmail());
+		assertEquals("http://bond.com", g1.getListPerson().get(1).getSiteweb());
+		assertEquals("11/09/1920",g1.getListPerson().get(1).getDateNaissance());
+		assertEquals(g1, g1.getListPerson().get(1).getGroupe());
+		
+		/* Test third group */
+		
+		g1 = ((LinkedList<Group>) listGroup).pop();
+		assertEquals(3, g1.getId());
+		assertEquals("ID", g1.getNomGroupe());
+		assertEquals(0, g1.getListPerson().size());
 		
 		
 	}

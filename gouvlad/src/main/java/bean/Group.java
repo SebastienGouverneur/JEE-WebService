@@ -1,5 +1,6 @@
 package bean;
 
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -7,7 +8,7 @@ public class Group {
 	
 	private int id;
 	private String nomGroupe;
-	private List<Person> listPerson;
+	private List<Person> listPerson = new LinkedList<Person>();
 	
 	public Group(){
 		

@@ -133,18 +133,15 @@ public class PersonDaoBdTest {
 		Person p1 = personFactory.getPerson();
 		Person p2 = personFactory.getPerson();
 		
-		LinkedList<Person> listPerson1 = new LinkedList<Person>();
-		LinkedList<Person> listPerson2 = new LinkedList<Person>();
 		
-		listPerson1.add(p1);
-		listPerson2.add(p2);
+	
 		
 		g1.setId(1);
-		g1.setListPerson(listPerson1);
+		g1.getListPerson().add(p1);
 		g1.setNomGroupe("FSI");
 		
 		g2.setId(2);
-		g2.setListPerson(listPerson2);
+		g2.getListPerson().add(p2);
 		g2.setNomGroupe("ISL");
 		
 		g3.setId(3);
@@ -173,7 +170,7 @@ public class PersonDaoBdTest {
 		
 		List<Group> listGroup = dao.findAllGroups(true);
 		
-		assertEquals(listGroup.size(), 3);
+		assertEquals(3, listGroup.size());
 		
 		
 	}

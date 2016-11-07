@@ -63,7 +63,7 @@ public class PersonDaoBd implements IPersonDao {
 		HashMap<Integer, Group> mapGroup = new HashMap<Integer, Group>();
 		Statement st = connection.createStatement();
 		ResultSet rs = st.executeQuery("SELECT * FROM "+tableNameGroup+" AS groupe LEFT OUTER JOIN "+tableNameBelongGroupPerson+" AS belong"
-						+ " ON groupe.`id-groupe`=belong.`id-groupe` INNER JOIN "+tableNamePerson+" AS person"
+						+ " ON groupe.`id-groupe`=belong.`id-groupe` LEFT OUTER JOIN "+tableNamePerson+" AS person"
 						+ " ON belong.`id-personne`=person.`id-personne` ORDER BY groupe.`id-groupe`");
 		while (rs.next()){
 			Group g;

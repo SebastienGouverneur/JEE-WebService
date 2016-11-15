@@ -191,15 +191,56 @@ public class PersonDaoBd implements IPersonDao {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	/*public void savePerson(Person person, boolean test){
+		
+	}*/
+	
+//	public void savePerson(Person person, String)
 
-	public void saveGroup(Group group) {
-		// TODO Auto-generated method stub
+	public void saveGroup(Group group) throws SQLException {
+		saveGroup(group, Resources.getString("KeyGroup"), Resources.getString("KeyBelong"));
+		
+	}
+	
+	public void saveGroup(Group group, boolean test) throws SQLException{
+		saveGroup(group, Resources.getString("KeyGroupTest"), Resources.getString("KeyBelongTest"));
+	}
+	
+	public void saveGroup(Group group, 
+						  String tableNameGroup,
+						  String tableNameBelong) throws SQLException{
+		PreparedStatement st;
+		if (group.getId() <= 0){
+			/* Absolutely sure we're managing a new group. Insert it in db. */
+			st = connection.prepareStatement("INSERT INTO "+tableNameGroup+" VALUES(NULL, ?)");
+			st.setString(1, group.getNomGroupe());
+			st.execute();
+		} else {
+			st = connection.prepareStatement("REPLACE INTO "+tableNameGroup+" VALUES(?, ?)");
+			st.setInt(1, group.getId());
+			st.setString(2, group.getNomGroupe());
+			st.execute();
+		}
+		
+		Statement st2 = connection.createStatement();
+		ResultSet rs = st2.executeQuery("SELECT `id-groupe` FROM "+tableNameGroup+" ORDER BY `id-groupe` DESC LIMIT 0,1");
+		rs.next();
+		int groupId = rs.getInt(1);
+		for (Person p: group.getListPerson()){
+			st = connection.prepareStatement("REPLACE INTO "+tableNameBelong+" VALUES(?, ?)");
+			st.setInt(1, p.getId());
+			st.setInt(2, groupId);
+			st.executeUpdate();
+		}
 		
 	}
 	
 	public Connection getConnection(){
 		return connection;
 	}
+
+	
 
 	
 }

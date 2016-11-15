@@ -18,6 +18,8 @@ public interface IPersonDao {
 	Person findPerson(int id) throws SQLException, NotFoundPersonException;
 	Person findPerson(int id, boolean test) throws SQLException, NotFoundPersonException;
 	void savePerson(Person person);
-	void saveGroup(Group group);
+	void saveGroup(Group group) throws SQLException;
+	void saveGroup(Group group, boolean test) throws SQLException;
 	Connection getConnection();
+
 }

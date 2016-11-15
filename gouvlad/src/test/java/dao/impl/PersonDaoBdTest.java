@@ -41,8 +41,8 @@ public class PersonDaoBdTest {
 	
 	@Before
 	public void clearTestTables() throws SQLException{
-		clearTable(Resources.getString("KeyPersonTest"));
 		clearTable(Resources.getString("KeyBelongTest"));
+		clearTable(Resources.getString("KeyPersonTest"));
 		clearTable(Resources.getString("KeyGroupTest"));
 	}
 	
@@ -58,6 +58,10 @@ public class PersonDaoBdTest {
 		st.setString(7, "0000000000000000000000000000000000000000000000000000000000000000"); 
 		st.setString(8, "12345678"); 
 		st.execute();
+		
+		if (person.getGroupe() != null){
+			
+		}
 	}
 	
 	private void insertGroup(Group group) throws SQLException, ParseException{
@@ -79,6 +83,7 @@ public class PersonDaoBdTest {
 	private void clearTable(String tableName) throws SQLException{
 		Statement st = dao.getConnection().createStatement();
 		st.execute("DELETE FROM "+tableName); 
+		st.execute("ALTER TABLE "+tableName+" AUTO_INCREMENT = 1");
 	}
 	
 	@Test
@@ -286,6 +291,45 @@ public class PersonDaoBdTest {
 	@Test(timeout = 10000, expected=NotFoundPersonException.class)
 	public void testNotFoundPerson() throws SQLException, NotFoundPersonException{
 		dao.findPerson(1, true);
+	}
+	
+	@Test(timeout = 10000)
+	public void testSaveGroup() throws SQLException, ParseException{
+		Group g1 = groupFactory.getGroup();
+		Person p1 = personFactory.getPerson();
+		
+		p1.setId(1);
+		p1.setNom("Gouverneur"); 
+		p1.setPrenom("Sébastien"); 
+		p1.setEmail("seb@gouv.com"); 
+		p1.setDateNaissance("28/09/1991"); 
+		p1.setSiteweb("http://sebgouv.com"); 
+		p1.setGroupe(g1);
+		
+		g1.setId(0);
+		g1.setNomGroupe("ISL");
+		g1.getListPerson().add(p1);
+		
+		insertPerson(p1);
+		dao.saveGroup(g1, true);
+		List<Group> listGroup = dao.findAllGroups(true);
+		assertEquals(listGroup.get(0).getId(), 1);
+		assertEquals(listGroup.get(0).getNomGroupe(), "ISL");
+		assertEquals(listGroup.get(0).getListPerson().size(), 1);
+		Person p = listGroup.get(0).getListPerson().get(0);
+		assertEquals(p.getId(), 1);
+		assertEquals(p.getNom(), "Gouverneur"); 
+		assertEquals(p.getPrenom(), "Sébastien");
+		assertEquals(p.getGroupe(), listGroup.get(0));
+		
+		g1.setId(1);
+		g1.setNomGroupe("FSI");
+		dao.saveGroup(g1, true);
+		
+		listGroup = dao.findAllGroups(true);
+		assertEquals(listGroup.get(0).getId(), 1);
+		assertEquals(listGroup.get(0).getNomGroupe(), "FSI");
+
 	}
 	
 

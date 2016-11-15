@@ -97,28 +97,48 @@ public class PersonDaoBd implements IPersonDao {
 	}
 
 	public List<Person> findAllPersons() throws SQLException{
-		return findAllPersons(Resources.getString("KeyPerson"));
+		return findAllPersons(Resources.getString("KeyPerson"), 
+							  Resources.getString("KeyBelong"),
+							  Resources.getString("KeyGroup"));
 	}
 	
 	public List<Person> findAllPersons(boolean test) throws SQLException {
-		return findAllPersons(Resources.getString("KeyPersonTest"));
+		return findAllPersons(Resources.getString("KeyPersonTest"),
+							  Resources.getString("KeyBelongTest"),
+							  Resources.getString("KeyGroupTest"));
 	}
 	
-	public List<Person> findAllPersons(String tableName) throws SQLException {
-		
+	public List<Person> findAllPersons(String tableNamePerson, 
+									   String tableNameBelongGroupPerson,
+									   String tableNameGroup) throws SQLException {
+		HashMap<Integer, Group> mapGroup = new HashMap<Integer, Group>();
 		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		List<Person> personList = new LinkedList<Person>();
 		Statement st = connection.createStatement();
-		ResultSet rs = st.executeQuery("SELECT * FROM "+tableName+" ORDER BY `id-personne`");
+		ResultSet rs = st.executeQuery("SELECT * FROM "+tableNamePerson+" AS person LEFT OUTER JOIN " +
+				tableNameBelongGroupPerson+" AS belong ON person.`id-personne` = belong.`id-personne`" +
+						" LEFT OUTER JOIN "+tableNameGroup+" AS groupe ON belong.`id-groupe` = groupe.`id-groupe` " +
+								"ORDER BY person.`id-personne`");
 		while (rs.next()){
 			Person p = personFactory.getPerson();
-			p.setId(rs.getInt(1));
-			p.setNom(rs.getString(2));
-			p.setPrenom(rs.getString(3));
-			p.setEmail(rs.getString(4));
-			p.setSiteweb(rs.getString(5));
-			p.setDateNaissance(df.format(rs.getDate(6)));
+			p.setId(rs.getInt("person.id-personne"));
+			p.setNom(rs.getString("person.nom"));
+			p.setPrenom(rs.getString("person.prenom"));
+			p.setEmail(rs.getString("person.email"));
+			p.setSiteweb(rs.getString("person.url-web"));
+			p.setDateNaissance(df.format(rs.getDate("person.date-naissance")));
 			personList.add(p);
+			
+			if (rs.getObject("groupe.id-groupe") != null){
+				if (!mapGroup.containsKey(rs.getInt("groupe.id-groupe"))){
+					Group g = groupFactory.getGroup();
+					g.setId(rs.getInt("groupe.id-groupe"));
+					g.setNomGroupe(rs.getString("groupe.nom-groupe"));
+					mapGroup.put(g.getId(), g);	
+				}
+				
+				p.setGroupe(mapGroup.get(rs.getInt("groupe.id-groupe")));
+			}
 		}
 		return personList;
 	}
@@ -134,11 +154,11 @@ public class PersonDaoBd implements IPersonDao {
 		PreparedStatement st = connection.prepareStatement("SELECT * FROM "+tableNamePerson+" " +
 				"AS person LEFT OUTER JOIN "+ tableNameBelongGroupPerson+" AS belong ON " +
 						"person.`id-person` = belong.`id-person`  WHERE person.`id-personne` = ?");
-		st.setInt(1, id);
-		ResultSet rs = st.executeQuery();
-		//if (!rs.next())
-			//throw new NotFoundPersonException();
-	//	Person p = personFactory.getPerson();
+//		st.setInt(1, id);
+//		ResultSet rs = st.executeQuery();
+//		if (!rs.next())
+//			throw new NotFoundPersonException();
+//		Person p = personFactory.getPerson();
 			return null;
 		
 		

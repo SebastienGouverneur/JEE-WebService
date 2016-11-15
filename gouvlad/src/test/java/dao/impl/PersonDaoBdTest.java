@@ -92,6 +92,11 @@ public class PersonDaoBdTest {
 		Person p1 = personFactory.getPerson();
 		Person p2 = personFactory.getPerson();
 		
+		Group g1 = groupFactory.getGroup();
+		g1.setId(2);
+		g1.getListPerson().add(p2);
+		g1.setNomGroupe("FSI");
+		
 		p1.setId(1);
 		p1.setNom("Gouverneur"); 
 		p1.setPrenom("Sébastien"); 
@@ -108,6 +113,7 @@ public class PersonDaoBdTest {
 		
 		insertPerson(p1);
 		insertPerson(p2);
+		insertGroup(g1);
 		
 		List<Person> listPerson = dao.findAllPersons(true);
 		
@@ -115,11 +121,14 @@ public class PersonDaoBdTest {
 		
 		assertEquals(listPerson.get(0).getId(), 1);
 		assertEquals(listPerson.get(0).getNom(), "Gouverneur"); 
-		assertEquals(listPerson.get(0).getPrenom(), "Sébastien"); 
+		assertEquals(listPerson.get(0).getPrenom(), "Sébastien");
+		assertNull(listPerson.get(0).getGroupe());
 		
 		assertEquals(listPerson.get(1).getId(), 2);
 		assertEquals(listPerson.get(1).getNom(), "Ladet"); 
-		assertEquals(listPerson.get(1).getPrenom(), "Gabriel"); 
+		assertEquals(listPerson.get(1).getPrenom(), "Gabriel");
+		assertEquals(listPerson.get(1).getGroupe().getId(), 2);
+		assertEquals(listPerson.get(1).getGroupe().getNomGroupe(), "FSI");
 	}
 	
 	@Test(timeout = 10000)

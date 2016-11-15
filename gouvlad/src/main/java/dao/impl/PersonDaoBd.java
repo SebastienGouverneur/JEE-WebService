@@ -143,23 +143,46 @@ public class PersonDaoBd implements IPersonDao {
 		return personList;
 	}
 
-	public Person findPerson(int id) {
-		
-		
-		//ResultSet rs = st.executeQuery();
-		return null;
+	public Person findPerson(int id) throws SQLException, NotFoundPersonException {
+		return findPerson(id, Resources.getString("KeyPerson"),
+				  Resources.getString("KeyBelong"),
+				  Resources.getString("KeyGroup"));
 	}
 	
-	public Person findPerson(int id, String tableNamePerson, String tableNameBelongGroupPerson ) throws SQLException{
+	public Person findPerson(int id, boolean test) throws SQLException, NotFoundPersonException{
+		return findPerson(id, Resources.getString("KeyPersonTest"),
+							  Resources.getString("KeyBelongTest"),
+							  Resources.getString("KeyGroupTest"));
+	}
+	
+	public Person findPerson(int id, 
+							 String tableNamePerson, 
+							 String tableNameBelongGroupPerson,
+							 String tableNameGroup) throws SQLException, NotFoundPersonException{
+		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		PreparedStatement st = connection.prepareStatement("SELECT * FROM "+tableNamePerson+" " +
 				"AS person LEFT OUTER JOIN "+ tableNameBelongGroupPerson+" AS belong ON " +
-						"person.`id-person` = belong.`id-person`  WHERE person.`id-personne` = ?");
-//		st.setInt(1, id);
-//		ResultSet rs = st.executeQuery();
-//		if (!rs.next())
-//			throw new NotFoundPersonException();
-//		Person p = personFactory.getPerson();
-			return null;
+						"person.`id-personne` = belong.`id-personne` " +
+						"LEFT OUTER JOIN "+tableNameGroup+" AS groupe ON belong.`id-groupe`=groupe.`id-groupe` " +
+								"WHERE person.`id-personne` = ?");
+		st.setInt(1, id);
+		ResultSet rs = st.executeQuery();
+		if (!rs.next())
+			throw new NotFoundPersonException();
+		Person p = personFactory.getPerson();
+		p.setId(rs.getInt("person.id-personne"));
+		p.setNom(rs.getString("person.nom"));
+		p.setPrenom(rs.getString("person.prenom"));
+		p.setEmail(rs.getString("person.email"));
+		p.setSiteweb(rs.getString("person.url-web"));
+		p.setDateNaissance(df.format(rs.getDate("person.date-naissance")));
+		if (rs.getObject("groupe.id-groupe") != null){
+			Group g = groupFactory.getGroup();
+			g.setId(rs.getInt("groupe.id-groupe"));
+			g.setNomGroupe(rs.getString("groupe.nom-groupe"));
+			p.setGroupe(g);
+		}
+			return p;
 		
 		
 	}

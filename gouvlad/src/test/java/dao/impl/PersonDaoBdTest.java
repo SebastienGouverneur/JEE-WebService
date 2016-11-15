@@ -239,6 +239,55 @@ public class PersonDaoBdTest {
 		
 	}
 	
+	@Test(timeout = 10000)
+	public void testFindPerson() throws SQLException, ParseException, NotFoundPersonException{
+		Person p1 = personFactory.getPerson();
+		Person p2 = personFactory.getPerson();
+		
+		p1.setId(1);
+		p1.setNom("Gouverneur"); 
+		p1.setPrenom("Sébastien"); 
+		p1.setEmail("seb@gouv.com"); 
+		p1.setDateNaissance("28/09/1991"); 
+		p1.setSiteweb("http://sebgouv.com"); 
+		
+		p2.setId(2);
+		p2.setNom("Ladet"); 
+		p2.setPrenom("Gabriel"); 
+		p2.setEmail("gabriel@ladet.net");
+		p2.setDateNaissance("22/02/1993"); 
+		p2.setSiteweb("http://ladet.net"); 
+		
+		Group g1 = groupFactory.getGroup();
+		g1.setId(2);
+		g1.getListPerson().add(p2);
+		g1.setNomGroupe("FSI");
+		
+		insertPerson(p1);
+		insertPerson(p2);
+		insertGroup(g1);
+		
+		Person p3 = dao.findPerson(1, true);
+		Person p4 = dao.findPerson(2, true);
+		
+		assertEquals(p3.getId(), 1);
+		assertEquals(p3.getNom(), "Gouverneur"); 
+		assertEquals(p3.getPrenom(), "Sébastien");
+		assertNull(p3.getGroupe());
+		
+		assertEquals(p4.getId(), 2);
+		assertEquals(p4.getNom(), "Ladet"); 
+		assertEquals(p4.getPrenom(), "Gabriel");
+		assertEquals(p4.getGroupe().getId(), 2);
+		assertEquals(p4.getGroupe().getNomGroupe(), "FSI");
+		
+	}
+	
+	@Test(timeout = 10000, expected=NotFoundPersonException.class)
+	public void testNotFoundPerson() throws SQLException, NotFoundPersonException{
+		dao.findPerson(1, true);
+	}
+	
 
 
 }

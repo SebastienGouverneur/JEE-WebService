@@ -2,6 +2,7 @@ package dao.impl;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -123,8 +124,24 @@ public class PersonDaoBd implements IPersonDao {
 	}
 
 	public Person findPerson(int id) {
-		// TODO Auto-generated method stub
+		
+		
+		//ResultSet rs = st.executeQuery();
 		return null;
+	}
+	
+	public Person findPerson(int id, String tableNamePerson, String tableNameBelongGroupPerson ) throws SQLException{
+		PreparedStatement st = connection.prepareStatement("SELECT * FROM "+tableNamePerson+" " +
+				"AS person LEFT OUTER JOIN "+ tableNameBelongGroupPerson+" AS belong ON " +
+						"person.`id-person` = belong.`id-person`  WHERE person.`id-personne` = ?");
+		st.setInt(1, id);
+		ResultSet rs = st.executeQuery();
+		//if (!rs.next())
+			//throw new NotFoundPersonException();
+	//	Person p = personFactory.getPerson();
+			return null;
+		
+		
 	}
 
 	public void savePerson(Person person) {

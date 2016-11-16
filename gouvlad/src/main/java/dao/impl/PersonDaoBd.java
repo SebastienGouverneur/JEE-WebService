@@ -6,8 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,6 +26,7 @@ import dao.IPersonDao;
 @Service
 public class PersonDaoBd implements IPersonDao {
 	
+	@SuppressWarnings("unused")
 	private String driverName = Resources.getString("KeyDriverName");
 	private String url		  = Resources.getString("KeyUrl");
 	private String user       = Resources.getString("KeyUser"); 
@@ -87,6 +88,8 @@ public class PersonDaoBd implements IPersonDao {
 				p.setEmail(rs.getString("person.email"));
 				p.setSiteweb(rs.getString("person.url-web"));
 				p.setDateNaissance(df.format(rs.getDate("person.date-naissance")));
+				p.setMotDePasseHash(rs.getString("person.mot-de-passe-hash"));
+				p.setSalt(rs.getString("person.salt"));
 				p.setGroupe(g);
 				g.getListPerson().add(p);
 			}
@@ -127,6 +130,8 @@ public class PersonDaoBd implements IPersonDao {
 			p.setEmail(rs.getString("person.email"));
 			p.setSiteweb(rs.getString("person.url-web"));
 			p.setDateNaissance(df.format(rs.getDate("person.date-naissance")));
+			p.setMotDePasseHash(rs.getString("person.mot-de-passe-hash"));
+			p.setSalt(rs.getString("person.salt"));
 			personList.add(p);
 			
 			if (rs.getObject("groupe.id-groupe") != null){
@@ -176,6 +181,8 @@ public class PersonDaoBd implements IPersonDao {
 		p.setEmail(rs.getString("person.email"));
 		p.setSiteweb(rs.getString("person.url-web"));
 		p.setDateNaissance(df.format(rs.getDate("person.date-naissance")));
+		p.setMotDePasseHash(rs.getString("person.mot-de-passe-hash"));
+		p.setSalt(rs.getString("person.salt"));
 		if (rs.getObject("groupe.id-groupe") != null){
 			Group g = groupFactory.getGroup();
 			g.setId(rs.getInt("groupe.id-groupe"));
@@ -186,18 +193,61 @@ public class PersonDaoBd implements IPersonDao {
 		
 		
 	}
-
-	public void savePerson(Person person) {
-		// TODO Auto-generated method stub
+	
+	public void savePerson(Person person) throws SQLException, ParseException {
+		savePerson(person, Resources.getString("KeyPerson"),
+						   Resources.getString("keyBelong"));
 		
 	}
 	
-	/*public void savePerson(Person person, boolean test){
-		
-	}*/
-	
-//	public void savePerson(Person person, String)
+	public void savePerson(Person person, boolean test) throws SQLException, ParseException{
+		savePerson(person, Resources.getString("KeyPersonTest"),
+						   Resources.getString("keyBelongTest"));
+	}
 
+	public void savePerson(Person person,
+							String tableNamePerson,
+							String tableNameBelong) throws SQLException, ParseException {
+		PreparedStatement st;
+		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		if (person.getId() <= 0) {
+			st = connection.prepareStatement("INSERT INTO "+tableNamePerson+" VALUES(NULL, ?, ?, ?, ?, ?, ?, ?)");
+			st.setString(1, person.getNom());
+			st.setString(2, person.getPrenom());
+			st.setString(3, person.getEmail());
+			st.setString(4, person.getSiteweb());
+			
+			st.setString(6, person.getMotDePasseHash());
+			st.setString(7, person.getSalt());
+			st.execute();
+		}
+		else {
+			st = connection.prepareStatement("REPLACE INTO "+tableNamePerson+" VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
+			st.setInt(1, person.getId());
+			st.setString(2, person.getNom());
+			st.setString(3, person.getPrenom());
+			st.setString(4, person.getEmail());
+			st.setString(5, person.getSiteweb());
+			st.setDate(6, new java.sql.Date(df.parse(person.getDateNaissance()).getTime()));
+			st.setString(7, person.getMotDePasseHash());
+			st.setString(8, person.getSalt());
+			st.execute();
+		}
+		
+		Statement st2 = connection.createStatement();
+		ResultSet rs = st2.executeQuery("SELECT `id-personne` FROM "+tableNamePerson+" ORDER BY `id-personne` DESC LIMIT 0,1");
+		rs.next();
+		int personId = rs.getInt(1);
+		st = connection.prepareStatement("REPLACE INTO "+tableNameBelong+" VALUES(?, ?)");
+		st.setInt(1, personId);
+		
+		/* PROBLEME EN DESSOUS */
+		
+		st.setInt(2, person.getGroupe().getId());
+		st.executeUpdate();
+		
+	}
+	
 	public void saveGroup(Group group) throws SQLException {
 		saveGroup(group, Resources.getString("KeyGroup"), Resources.getString("KeyBelong"));
 		
@@ -240,7 +290,4 @@ public class PersonDaoBd implements IPersonDao {
 		return connection;
 	}
 
-	
-
-	
 }

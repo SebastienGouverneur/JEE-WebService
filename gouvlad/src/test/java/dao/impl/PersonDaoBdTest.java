@@ -293,6 +293,30 @@ public class PersonDaoBdTest {
 		dao.findPerson(1, true);
 	}
 	
+	@Test(timeout = 1000)
+	public void testSavePerson() throws SQLException, ParseException {
+		Person p1 = personFactory.getPerson();
+		Group g1 = groupFactory.getGroup();
+		
+		p1.setId(1);
+		p1.setNom("Gouverneur"); 
+		p1.setPrenom("Sébastien"); 
+		p1.setEmail("seb@gouv.com"); 
+		p1.setDateNaissance("28/09/1991"); 
+		p1.setSiteweb("http://sebgouv.com");
+		p1.setMotDePasseHash("mdpdemerde");
+		p1.setSalt("lalala");
+		p1.setGroupe(g1);
+		
+		g1.setId(0);
+		g1.setNomGroupe("ISL");
+		g1.getListPerson().add(p1);
+		
+		insertPerson(p1);
+		dao.savePerson(p1, true);
+		
+	}
+	
 	@Test(timeout = 10000)
 	public void testSaveGroup() throws SQLException, ParseException{
 		Group g1 = groupFactory.getGroup();

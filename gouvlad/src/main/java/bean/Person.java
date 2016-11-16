@@ -8,6 +8,8 @@ public class Person {
 	private String email;
 	private String siteweb;
 	private String dateNaissance;
+	private String motDePasseHash;
+	private String salt;
 	private Group groupe;
 	
 	
@@ -61,6 +63,22 @@ public class Person {
 	
 	public void setDateNaissance(String dateNaissance) {
 		this.dateNaissance = dateNaissance;
+	}
+	
+	public String getMotDePasseHash() {
+		return motDePasseHash;
+	}
+	
+	public void setMotDePasseHash(String motDePasseHash) {
+		this.motDePasseHash = motDePasseHash;
+	}
+	
+	public String getSalt() {
+		return salt;
+	}
+	
+	public void setSalt(String salt) {
+		this.salt = salt;
 	}
 	
 	public Group getGroupe() {

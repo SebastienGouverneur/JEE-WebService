@@ -356,6 +356,67 @@ public class PersonDaoBdTest {
 
 	}
 	
+	@Test(timeout = 10000)
+	public void testSaveGroupNotMaxId() throws SQLException, ParseException{
+		Group g1 = groupFactory.getGroup();
+		Group g2 = groupFactory.getGroup();
+		Person p1 = personFactory.getPerson();
+		Person p2 = personFactory.getPerson();
+		
+		p1.setId(1);
+		p1.setNom("Gouverneur"); 
+		p1.setPrenom("Sébastien"); 
+		p1.setEmail("seb@gouv.com"); 
+		p1.setDateNaissance("28/09/1991"); 
+		p1.setSiteweb("http://sebgouv.com"); 
+		p1.setGroupe(g2);
+		
+		p2.setId(2);
+		p2.setNom("Ladet"); 
+		p2.setPrenom("Gabriel"); 
+		p2.setEmail("gabriel@ladet.net");
+		p2.setDateNaissance("22/02/1993"); 
+		p2.setSiteweb("http://ladet.net");
+		p2.setGroupe(g2);
+		
+		
+		g1.setId(2);
+		g1.setNomGroupe("ISL");
+		
+		g2.setId(1);
+		g2.setNomGroupe("FSI");
+		g2.getListPerson().add(p1);
+		g2.getListPerson().add(p2);
+		
+		insertPerson(p1);
+		insertPerson(p2);
+		dao.saveGroup(g1, true);
+		dao.saveGroup(g2, true);
+		
+		List<Group> listGroup = dao.findAllGroups(true);
+		assertEquals(listGroup.get(1).getId(), 2);
+		assertEquals(listGroup.get(1).getNomGroupe(), "ISL");
+		assertEquals(listGroup.get(1).getListPerson().size(), 0);
+		
+		assertEquals(listGroup.get(0).getId(), 1);
+		assertEquals(listGroup.get(0).getNomGroupe(), "FSI");
+		assertEquals(listGroup.get(0).getListPerson().size(), 2);
+
+
+		
+		Person p = listGroup.get(0).getListPerson().get(0);
+		assertEquals(p.getId(), 1);
+		assertEquals(p.getNom(), "Gouverneur"); 
+		assertEquals(p.getPrenom(), "Sébastien");
+		assertEquals(p.getGroupe(), listGroup.get(0));
+		
+		p = listGroup.get(0).getListPerson().get(1);
+		assertEquals(p.getId(), 2);
+		assertEquals(p.getNom(), "Ladet"); 
+		assertEquals(p.getPrenom(), "Gabriel");
+		assertEquals(p.getGroupe(), listGroup.get(0));
+	}
+	
 
 
 }

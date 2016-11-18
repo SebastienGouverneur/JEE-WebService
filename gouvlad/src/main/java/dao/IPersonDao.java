@@ -18,7 +18,6 @@ public interface IPersonDao {
 	List<Person> findAllPersons(boolean test) throws SQLException;
 	Person findPerson(int id) throws SQLException, NotFoundPersonException;
 	Person findPerson(int id, boolean test) throws SQLException, NotFoundPersonException;
-	void savePerson(Person person) throws SQLException, ParseException;
 	void savePerson(Person person, boolean test) throws SQLException, ParseException;
 	void saveGroup(Group group) throws SQLException;
 	void saveGroup(Group group, boolean test) throws SQLException;

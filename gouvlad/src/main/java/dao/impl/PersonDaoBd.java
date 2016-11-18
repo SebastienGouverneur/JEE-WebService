@@ -196,30 +196,47 @@ public class PersonDaoBd implements IPersonDao {
 	
 	public void savePerson(Person person) throws SQLException, ParseException {
 		savePerson(person, Resources.getString("KeyPerson"),
-						   Resources.getString("keyBelong"));
+						   Resources.getString("keyBelong"),
+						   Resources.getString("keyGroup"),
+						   false);
 		
 	}
 	
 	public void savePerson(Person person, boolean test) throws SQLException, ParseException{
 		savePerson(person, Resources.getString("KeyPersonTest"),
-						   Resources.getString("keyBelongTest"));
+						   Resources.getString("KeyBelongTest"),
+						   Resources.getString("KeyGroupTest"),
+						   true
+						   );
+	}
+	
+	private String formatDateForDao(String date){
+		String[] sdate = date.split("/");
+		return sdate[2]+"-"+sdate[1]+"-"+sdate[0];
 	}
 
 	public void savePerson(Person person,
 							String tableNamePerson,
-							String tableNameBelong) throws SQLException, ParseException {
+							String tableNameBelong,
+							String tableNameGroup,
+							boolean test) throws SQLException, ParseException {
 		PreparedStatement st;
-		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		if (person.getId() <= 0) {
+			/* Absolutely sure we're managing a new person. Insert it in db. */
 			st = connection.prepareStatement("INSERT INTO "+tableNamePerson+" VALUES(NULL, ?, ?, ?, ?, ?, ?, ?)");
 			st.setString(1, person.getNom());
 			st.setString(2, person.getPrenom());
 			st.setString(3, person.getEmail());
 			st.setString(4, person.getSiteweb());
-			
+			st.setString(5, formatDateForDao(person.getDateNaissance()));
 			st.setString(6, person.getMotDePasseHash());
 			st.setString(7, person.getSalt());
 			st.execute();
+			Statement st2 = connection.createStatement();
+			ResultSet rs = st2.executeQuery("SELECT `id-personne` FROM "+tableNamePerson+" ORDER BY `id-personne` DESC LIMIT 0,1");
+			rs.next();
+			person.setId(rs.getInt(1));
+			
 		}
 		else {
 			st = connection.prepareStatement("REPLACE INTO "+tableNamePerson+" VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
@@ -228,23 +245,30 @@ public class PersonDaoBd implements IPersonDao {
 			st.setString(3, person.getPrenom());
 			st.setString(4, person.getEmail());
 			st.setString(5, person.getSiteweb());
-			st.setDate(6, new java.sql.Date(df.parse(person.getDateNaissance()).getTime()));
+			st.setString(6, formatDateForDao(person.getDateNaissance()));
 			st.setString(7, person.getMotDePasseHash());
 			st.setString(8, person.getSalt());
 			st.execute();
 		}
 		
-		Statement st2 = connection.createStatement();
-		ResultSet rs = st2.executeQuery("SELECT `id-personne` FROM "+tableNamePerson+" ORDER BY `id-personne` DESC LIMIT 0,1");
-		rs.next();
-		int personId = rs.getInt(1);
-		st = connection.prepareStatement("REPLACE INTO "+tableNameBelong+" VALUES(?, ?)");
-		st.setInt(1, personId);
 		
-		/* PROBLEME EN DESSOUS */
 		
-		st.setInt(2, person.getGroupe().getId());
-		st.executeUpdate();
+		
+		if (person.getGroupe() != null){
+			st = connection.prepareStatement("REPLACE INTO "+tableNameBelong+" VALUES(?, ?)");
+			st.setInt(1, person.getId());
+			st.setInt(2, person.getGroupe().getId());
+			st.executeUpdate();
+			if (test)
+				saveGroup(person.getGroupe(), true);
+			else
+				saveGroup(person.getGroupe());
+		}
+		else {
+			st = connection.prepareStatement("DELETE FROM "+tableNameBelong+" WHERE `id-personne` = ?");
+			st.setInt(1, person.getId());
+			st.execute();
+		}
 		
 	}
 	
@@ -261,7 +285,6 @@ public class PersonDaoBd implements IPersonDao {
 						  String tableNameGroup,
 						  String tableNameBelong) throws SQLException{
 		PreparedStatement st;
-		int groupId;
 		if (group.getId() <= 0){
 			/* Absolutely sure we're managing a new group. Insert it in db. */
 			st = connection.prepareStatement("INSERT INTO "+tableNameGroup+" VALUES(NULL, ?)");
@@ -270,21 +293,20 @@ public class PersonDaoBd implements IPersonDao {
 			Statement st2 = connection.createStatement();
 			ResultSet rs = st2.executeQuery("SELECT `id-groupe` FROM "+tableNameGroup+" ORDER BY `id-groupe` DESC LIMIT 0,1");
 			rs.next();
-			groupId = rs.getInt(1);
+			group.setId(rs.getInt(1));
 			
 		} else {
 			st = connection.prepareStatement("REPLACE INTO "+tableNameGroup+" VALUES(?, ?)");
 			st.setInt(1, group.getId());
 			st.setString(2, group.getNomGroupe());
 			st.execute();
-			groupId = group.getId();
 		}
 		
 		
 		for (Person p: group.getListPerson()){
 			st = connection.prepareStatement("REPLACE INTO "+tableNameBelong+" VALUES(?, ?)");
 			st.setInt(1, p.getId());
-			st.setInt(2, groupId);
+			st.setInt(2, group.getId());
 			st.executeUpdate();
 		}
 		

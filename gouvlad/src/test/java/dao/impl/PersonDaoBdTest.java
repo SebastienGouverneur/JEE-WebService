@@ -46,6 +46,49 @@ public class PersonDaoBdTest {
 		clearTable(Resources.getString("KeyGroupTest"));
 	}
 	
+	private Person getMockPersonGabriel(int id, Group group){
+		Person p = personFactory.getPerson();
+		p.setId(id);
+		p.setNom("Ladet"); 
+		p.setPrenom("Gabriel"); 
+		p.setEmail("gabriel@ladet.net");
+		p.setDateNaissance("22/02/1993"); 
+		p.setSiteweb("http://ladet.net"); 
+		p.setMotDePasseHash("0000000000000000000000000000000000000000000000000000000000000000");
+		p.setSalt("12345678");
+		p.setGroupe(group);
+		return p;
+
+	}
+	
+	private Person getMockPersonSebastien(int id, Group group){
+		Person p = personFactory.getPerson();
+		p.setId(id);
+		p.setNom("Gouverneur"); 
+		p.setPrenom("Sébastien"); 
+		p.setEmail("seb@gouv.com"); 
+		p.setDateNaissance("28/09/1991"); 
+		p.setSiteweb("http://sebgouv.com"); 
+		p.setMotDePasseHash("0000000000000000000000000000000000000000000000000000000000000000");
+		p.setSalt("12345678");
+		p.setGroupe(group);
+		return p;
+	}
+	
+	private Person getMockPersonJames(int id, Group group){
+		Person p = personFactory.getPerson();
+		p.setId(id);
+		p.setNom("Bond"); 
+		p.setPrenom("James"); 
+		p.setEmail("jamesbond@mi6.com");
+		p.setDateNaissance("11/09/1920"); 
+		p.setSiteweb("http://bond.com");
+		p.setMotDePasseHash("0000000000000000000000000000000000000000000000000000000000000000");
+		p.setSalt("12345678");
+		p.setGroupe(group);
+		return p;
+	}
+	
 	private void insertPerson(Person person) throws SQLException, ParseException{
 		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy"); 
 		PreparedStatement st = dao.getConnection().prepareStatement("INSERT INTO "+Resources.getString("KeyPersonTest")+" VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
@@ -86,36 +129,22 @@ public class PersonDaoBdTest {
 		st.execute("ALTER TABLE "+tableName+" AUTO_INCREMENT = 1");
 	}
 	
-	@Test
+	@Test(timeout = 10000)
 	public void testConnection() {
 		Assert.assertNotNull(dao);
 		Assert.assertNotNull(dao.getConnection());
 	}
 	
-	@Test
-	public void testFindAllPersons() throws SQLException, ParseException{
-		Person p1 = personFactory.getPerson();
-		Person p2 = personFactory.getPerson();
-		
+	@Test(timeout = 10000)
+	public void testFindAllPersons2PersonsWithOneGroup() throws SQLException, ParseException{
 		Group g1 = groupFactory.getGroup();
 		g1.setId(2);
-		g1.getListPerson().add(p2);
 		g1.setNomGroupe("FSI");
 		
-		p1.setId(1);
-		p1.setNom("Gouverneur"); 
-		p1.setPrenom("Sébastien"); 
-		p1.setEmail("seb@gouv.com"); 
-		p1.setDateNaissance("28/09/1991"); 
-		p1.setSiteweb("http://sebgouv.com"); 
-		
-		p2.setId(2);
-		p2.setNom("Ladet"); 
-		p2.setPrenom("Gabriel"); 
-		p2.setEmail("gabriel@ladet.net");
-		p2.setDateNaissance("22/02/1993"); 
-		p2.setSiteweb("http://ladet.net"); 
-		
+		Person p1 = getMockPersonSebastien(1, null);
+		Person p2 = getMockPersonGabriel(2, g1);
+		g1.getListPerson().add(p2);
+
 		insertPerson(p1);
 		insertPerson(p2);
 		insertGroup(g1);
@@ -137,18 +166,21 @@ public class PersonDaoBdTest {
 	}
 	
 	@Test(timeout = 10000)
-	public void testFindAllGroups() throws SQLException, ParseException {
+	public void testFindAllPersonsWithNoPersonInDb() throws SQLException{
+		List<Person> listPerson = dao.findAllPersons(true);
+		assertEquals(listPerson.size(), 0);
+	}
+	
+	@Test(timeout = 10000)
+	public void testFindAllGroups3groupsWith3Persons() throws SQLException, ParseException {
 		
 		Group g1 = groupFactory.getGroup();
 		Group g2 = groupFactory.getGroup();
 		Group g3 = groupFactory.getGroup();
 		
-		Person p1 = personFactory.getPerson();
-		Person p2 = personFactory.getPerson();
-		Person p3 = personFactory.getPerson();
-		
-		
-	
+		Person p1 = getMockPersonSebastien(1, g1); 
+		Person p2 = getMockPersonGabriel(2, g2); 
+		Person p3 = getMockPersonJames(3, g2); 
 		
 		g1.setId(1);
 		g1.getListPerson().add(p1);
@@ -162,26 +194,6 @@ public class PersonDaoBdTest {
 		g3.setId(3);
 		g3.setNomGroupe("ID");
 		
-		p1.setId(1);
-		p1.setNom("Gouverneur"); 
-		p1.setPrenom("Sébastien"); 
-		p1.setEmail("seb@gouv.com"); 
-		p1.setDateNaissance("28/09/1991"); 
-		p1.setSiteweb("http://sebgouv.com"); 
-		
-		p2.setId(2);
-		p2.setNom("Ladet"); 
-		p2.setPrenom("Gabriel"); 
-		p2.setEmail("gabriel@ladet.net");
-		p2.setDateNaissance("22/02/1993"); 
-		p2.setSiteweb("http://ladet.net"); 
-		
-		p3.setId(3);
-		p3.setNom("Bond"); 
-		p3.setPrenom("James"); 
-		p3.setEmail("jamesbond@mi6.com");
-		p3.setDateNaissance("11/09/1920"); 
-		p3.setSiteweb("http://bond.com"); 
 		
 		insertPerson(p1);
 		insertPerson(p2);
@@ -245,29 +257,22 @@ public class PersonDaoBdTest {
 	}
 	
 	@Test(timeout = 10000)
+	public void testFindAllGroupsWithNoGroupInDb() throws SQLException {
+		
+		List<Group> listGroup = dao.findAllGroups(true);
+		assertEquals(listGroup.size(), 0);
+	}
+	
+	@Test(timeout = 10000)
 	public void testFindPerson() throws SQLException, ParseException, NotFoundPersonException{
-		Person p1 = personFactory.getPerson();
-		Person p2 = personFactory.getPerson();
-		
-		p1.setId(1);
-		p1.setNom("Gouverneur"); 
-		p1.setPrenom("Sébastien"); 
-		p1.setEmail("seb@gouv.com"); 
-		p1.setDateNaissance("28/09/1991"); 
-		p1.setSiteweb("http://sebgouv.com"); 
-		
-		p2.setId(2);
-		p2.setNom("Ladet"); 
-		p2.setPrenom("Gabriel"); 
-		p2.setEmail("gabriel@ladet.net");
-		p2.setDateNaissance("22/02/1993"); 
-		p2.setSiteweb("http://ladet.net"); 
-		
 		Group g1 = groupFactory.getGroup();
 		g1.setId(2);
-		g1.getListPerson().add(p2);
 		g1.setNomGroupe("FSI");
 		
+		Person p1 = getMockPersonSebastien(1, null);
+		Person p2 = getMockPersonGabriel(2, g1);
+		g1.getListPerson().add(p2);
+
 		insertPerson(p1);
 		insertPerson(p2);
 		insertGroup(g1);
@@ -293,21 +298,11 @@ public class PersonDaoBdTest {
 		dao.findPerson(1, true);
 	}
 	
-	@Test(timeout = 1000)
-	public void testSavePerson() throws SQLException, ParseException {
-		Person p1 = personFactory.getPerson();
+	@Test(timeout = 10000)
+	public void testSavePersonNewPersonNoId() throws SQLException, ParseException {
 		Group g1 = groupFactory.getGroup();
 		
-		p1.setId(0);
-		p1.setNom("Gouverneur"); 
-		p1.setPrenom("Sébastien"); 
-		p1.setEmail("seb@gouv.com"); 
-		p1.setDateNaissance("28/09/1991"); 
-		p1.setSiteweb("http://sebgouv.com");
-		p1.setMotDePasseHash("0000000000000000000000000000000000000000000000000000000000000000");
-		p1.setSalt("12345678");
-		p1.setGroupe(g1);
-		
+		Person p1 = getMockPersonSebastien(0, g1);
 		g1.setId(1);
 		g1.setNomGroupe("ISL");
 		g1.getListPerson().add(p1);
@@ -317,8 +312,123 @@ public class PersonDaoBdTest {
 		List<Group> g1_1 = dao.findAllGroups(true);
 		assertEquals(1, p1_1.size());
 		assertEquals(1, g1_1.size());
+		assertEquals(1, p1.getId());
 		
 	}
+	
+	@Test(timeout = 10000)
+	public void testSavePersonNewPersonUpdateGroup() throws SQLException, ParseException {
+		Group g1 = groupFactory.getGroup();
+		
+		Person p1 = getMockPersonSebastien(1, g1);
+		Person p2 = getMockPersonJames(2, null);
+		Person p3 = getMockPersonGabriel(3, g1);
+		g1.setId(1);
+		g1.setNomGroupe("ISL");
+		g1.getListPerson().add(p1);
+		
+		insertPerson(p1);
+		insertPerson(p2);
+		insertGroup(g1);
+		
+		g1.setNomGroupe("Nouveau nom");
+		dao.savePerson(p3, true);
+		
+		List<Person> p1_1 = dao.findAllPersons(true);
+		List<Group> g1_1 = dao.findAllGroups(true);
+		assertEquals(3, p1_1.size());
+		assertEquals(1, g1_1.size());
+		assertEquals("Nouveau nom", g1_1.get(0).getNomGroupe());
+		
+		assertEquals(1, p1_1.get(0).getId());
+		assertEquals("Gouverneur", p1_1.get(0).getNom());
+		assertEquals("Sébastien", p1_1.get(0).getPrenom());
+		assertEquals("seb@gouv.com", p1_1.get(0).getEmail());
+		assertEquals("http://sebgouv.com", p1_1.get(0).getSiteweb());
+		assertEquals("28/09/1991", p1_1.get(0).getDateNaissance());
+		assertEquals(1, p1_1.get(0).getGroupe().getId());
+		
+		assertEquals(2, p1_1.get(1).getId());
+		assertEquals("Bond", p1_1.get(1).getNom());
+		assertEquals("James", p1_1.get(1).getPrenom());
+		assertEquals("jamesbond@mi6.com", p1_1.get(1).getEmail());
+		assertEquals("http://bond.com", p1_1.get(1).getSiteweb());
+		assertEquals("11/09/1920", p1_1.get(1).getDateNaissance());
+		assertNull(p1_1.get(1).getGroupe());
+		
+		assertEquals(3, p1_1.get(2).getId());
+		assertEquals("Ladet", p1_1.get(2).getNom());
+		assertEquals("Gabriel", p1_1.get(2).getPrenom());
+		assertEquals("gabriel@ladet.net", p1_1.get(2).getEmail());
+		assertEquals("http://ladet.net", p1_1.get(2).getSiteweb());
+		assertEquals("22/02/1993", p1_1.get(2).getDateNaissance());
+		assertEquals(1, p1_1.get(2).getGroupe().getId());
+
+		
+	}
+	
+	@Test(timeout = 10000)
+	public void testSavePersonUpdatePersonGroup() throws SQLException, ParseException {
+		Group g1 = groupFactory.getGroup();
+		g1.setId(1);
+		g1.setNomGroupe("ISL");
+		Person p1 = getMockPersonGabriel(1, g1);
+		g1.getListPerson().add(p1);
+		
+		Group g2 = groupFactory.getGroup();
+		g2.setId(2);
+		g2.setNomGroupe("FSI");
+		
+		insertPerson(p1);
+		insertGroup(g1);
+		insertGroup(g2);
+		
+		p1.setNom("Nouveau Ladet");
+		p1.setPrenom("Nouveau Gabriel");
+		p1.setEmail("gab@lad.com");
+		p1.setDateNaissance("20/02/1993");
+		p1.setMotDePasseHash("1111111111111111111111111111111111111111111111111111111111111111");
+		p1.setSalt("99999999");
+		p1.setSiteweb("http://google.com");
+		p1.setGroupe(g2);
+		dao.savePerson(p1, true);
+		
+		List<Person> p1_1 = dao.findAllPersons(true);
+		List<Group> g1_1 = dao.findAllGroups(true);
+		assertEquals(1, p1_1.size());
+		assertEquals(2, g1_1.size());
+		Person p1_1_1 = p1_1.get(0);
+		assertEquals(p1_1_1.getNom(), "Nouveau Ladet");
+		assertEquals(p1_1_1.getPrenom(), "Nouveau Gabriel");
+		assertEquals(p1_1_1.getEmail(), "gab@lad.com");
+		assertEquals(p1_1_1.getDateNaissance(), "20/02/1993");
+		assertEquals(p1_1_1.getMotDePasseHash(), "1111111111111111111111111111111111111111111111111111111111111111");
+		assertEquals(p1_1_1.getSalt(), "99999999");
+		assertEquals(p1_1_1.getSiteweb(), "http://google.com");
+		assertEquals(p1_1_1.getGroupe().getId(), 2);
+
+	}
+	
+	@Test(timeout = 10000)
+	public void testSavePersonUpdatePersonRemoveGroup() throws SQLException, ParseException {
+		Group g1 = groupFactory.getGroup();
+		g1.setId(1);
+		g1.setNomGroupe("ISL");
+		Person p1 = getMockPersonGabriel(1, g1);
+		g1.getListPerson().add(p1);
+		insertPerson(p1);
+		insertGroup(g1);
+		
+		p1.setGroupe(null);
+		dao.savePerson(p1, true);
+		List<Person> p1_1 = dao.findAllPersons(true);
+		List<Group> g1_1 = dao.findAllGroups(true);
+		assertEquals(1, p1_1.size());
+		assertEquals(1, g1_1.size());
+		assertNull(p1_1.get(0).getGroupe());
+		
+	}
+	
 	
 	@Test(timeout = 10000)
 	public void testSaveGroup() throws SQLException, ParseException{

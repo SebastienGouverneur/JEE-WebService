@@ -102,9 +102,6 @@ public class PersonDaoBdTest {
 		st.setString(8, person.getSalt()); 
 		st.execute();
 		
-		if (person.getGroupe() != null){
-			
-		}
 	}
 	
 	private void insertGroup(Group group) throws SQLException, ParseException{
@@ -497,7 +494,7 @@ public class PersonDaoBdTest {
 		assertEquals(p.getGroupe(), listGroup.get(0));
 	}
 	
-	@Test
+	@Test(timeout = 10000)
 	public void testSaveGroupUnregisterUser() throws SQLException, ParseException{
 		Group g1 = groupFactory.getGroup();
 		Person p1 = getMockPersonGabriel(1, g1);

@@ -90,8 +90,7 @@ public class PersonDaoBd implements IPersonDao {
 				p.setDateNaissance(df.format(rs.getDate("person.date-naissance")));
 				p.setMotDePasseHash(rs.getString("person.mot-de-passe-hash"));
 				p.setSalt(rs.getString("person.salt"));
-				p.setGroupe(g);
-				g.getListPerson().add(p);
+				p.addToGroup(g);
 			}
 			
 			
@@ -142,7 +141,7 @@ public class PersonDaoBd implements IPersonDao {
 					mapGroup.put(g.getId(), g);	
 				}
 				
-				p.setGroupe(mapGroup.get(rs.getInt("groupe.id-groupe")));
+				p.addToGroup(mapGroup.get(rs.getInt("groupe.id-groupe")));
 			}
 		}
 		return personList;
@@ -187,7 +186,7 @@ public class PersonDaoBd implements IPersonDao {
 			Group g = groupFactory.getGroup();
 			g.setId(rs.getInt("groupe.id-groupe"));
 			g.setNomGroupe(rs.getString("groupe.nom-groupe"));
-			p.setGroupe(g);
+			p.addToGroup(g);
 		}
 			return p;
 		
@@ -285,12 +284,13 @@ public class PersonDaoBd implements IPersonDao {
 						  String tableNameGroup,
 						  String tableNameBelong) throws SQLException{
 		PreparedStatement st;
+		Statement st2;
 		if (group.getId() <= 0){
 			/* Absolutely sure we're managing a new group. Insert it in db. */
 			st = connection.prepareStatement("INSERT INTO "+tableNameGroup+" VALUES(NULL, ?)");
 			st.setString(1, group.getNomGroupe());
 			st.execute();
-			Statement st2 = connection.createStatement();
+			st2 = connection.createStatement();
 			ResultSet rs = st2.executeQuery("SELECT `id-groupe` FROM "+tableNameGroup+" ORDER BY `id-groupe` DESC LIMIT 0,1");
 			rs.next();
 			group.setId(rs.getInt(1));
@@ -303,6 +303,7 @@ public class PersonDaoBd implements IPersonDao {
 		}
 		
 		
+		/* Updates persons in the group */
 		for (Person p: group.getListPerson()){
 			st = connection.prepareStatement("REPLACE INTO "+tableNameBelong+" VALUES(?, ?)");
 			st.setInt(1, p.getId());
@@ -310,6 +311,25 @@ public class PersonDaoBd implements IPersonDao {
 			st.executeUpdate();
 		}
 		
+		/* Removes persons who don't belong anymore to the group */
+		String builtPersonListForSQLRequest = buildListForSQL(group.getListPerson());
+		st = connection.prepareStatement("DELETE FROM "+tableNameBelong+" WHERE `id-groupe`=? "+builtPersonListForSQLRequest);
+		st.setInt(1, group.getId());
+		st.execute();
+		
+		
+	}
+	
+	private String buildListForSQL(List<Person> list){
+		if (list.size() == 0)
+			return "";
+		String res = "AND `id-personne` NOT IN (";
+		for (Person p: list){
+			res += p.getId()+",";
+		}
+		
+		res = res.substring(0, res.length()-1); /* Removes last comma */
+		return res += ")";
 	}
 	
 	public Connection getConnection(){

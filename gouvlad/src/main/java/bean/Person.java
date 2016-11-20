@@ -84,10 +84,24 @@ public class Person {
 	public Group getGroupe() {
 		return groupe;
 	}
-	public void setGroupe(Group groupe) {
+	
+	public void addToGroup(Group groupe) {
+		if (this.groupe == groupe)
+			return;
+		
+		if (this.groupe != null){
+			this.groupe.removeFromPersonList(this);
+		}
+		
+		if (groupe != null)
+			groupe.addToPersonList(this);
+		
 		this.groupe = groupe;
 	}
 	
+	public void removeFromGroup(){
+		addToGroup(null);
+	}
 	
 	
 

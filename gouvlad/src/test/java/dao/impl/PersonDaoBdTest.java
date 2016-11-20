@@ -56,7 +56,7 @@ public class PersonDaoBdTest {
 		p.setSiteweb("http://ladet.net"); 
 		p.setMotDePasseHash("0000000000000000000000000000000000000000000000000000000000000000");
 		p.setSalt("12345678");
-		p.setGroupe(group);
+		p.addToGroup(group);
 		return p;
 
 	}
@@ -71,7 +71,7 @@ public class PersonDaoBdTest {
 		p.setSiteweb("http://sebgouv.com"); 
 		p.setMotDePasseHash("0000000000000000000000000000000000000000000000000000000000000000");
 		p.setSalt("12345678");
-		p.setGroupe(group);
+		p.addToGroup(group);
 		return p;
 	}
 	
@@ -85,7 +85,7 @@ public class PersonDaoBdTest {
 		p.setSiteweb("http://bond.com");
 		p.setMotDePasseHash("0000000000000000000000000000000000000000000000000000000000000000");
 		p.setSalt("12345678");
-		p.setGroupe(group);
+		p.addToGroup(group);
 		return p;
 	}
 	
@@ -98,8 +98,8 @@ public class PersonDaoBdTest {
 		st.setString(4, person.getEmail());
 		st.setString(5,  person.getSiteweb());
 		st.setDate(6, new java.sql.Date(df.parse(person.getDateNaissance()).getTime()));
-		st.setString(7, "0000000000000000000000000000000000000000000000000000000000000000"); 
-		st.setString(8, "12345678"); 
+		st.setString(7, person.getMotDePasseHash()); 
+		st.setString(8, person.getSalt()); 
 		st.execute();
 		
 		if (person.getGroupe() != null){
@@ -143,7 +143,6 @@ public class PersonDaoBdTest {
 		
 		Person p1 = getMockPersonSebastien(1, null);
 		Person p2 = getMockPersonGabriel(2, g1);
-		g1.getListPerson().add(p2);
 
 		insertPerson(p1);
 		insertPerson(p2);
@@ -183,12 +182,9 @@ public class PersonDaoBdTest {
 		Person p3 = getMockPersonJames(3, g2); 
 		
 		g1.setId(1);
-		g1.getListPerson().add(p1);
 		g1.setNomGroupe("ISL");
 		
 		g2.setId(2);
-		g2.getListPerson().add(p2);
-		g2.getListPerson().add(p3);
 		g2.setNomGroupe("FSI");
 		
 		g3.setId(3);
@@ -271,7 +267,6 @@ public class PersonDaoBdTest {
 		
 		Person p1 = getMockPersonSebastien(1, null);
 		Person p2 = getMockPersonGabriel(2, g1);
-		g1.getListPerson().add(p2);
 
 		insertPerson(p1);
 		insertPerson(p2);
@@ -305,7 +300,6 @@ public class PersonDaoBdTest {
 		Person p1 = getMockPersonSebastien(0, g1);
 		g1.setId(1);
 		g1.setNomGroupe("ISL");
-		g1.getListPerson().add(p1);
 		dao.savePerson(p1, true);
 		
 		List<Person> p1_1 = dao.findAllPersons(true);
@@ -325,7 +319,6 @@ public class PersonDaoBdTest {
 		Person p3 = getMockPersonGabriel(3, g1);
 		g1.setId(1);
 		g1.setNomGroupe("ISL");
-		g1.getListPerson().add(p1);
 		
 		insertPerson(p1);
 		insertPerson(p2);
@@ -373,7 +366,6 @@ public class PersonDaoBdTest {
 		g1.setId(1);
 		g1.setNomGroupe("ISL");
 		Person p1 = getMockPersonGabriel(1, g1);
-		g1.getListPerson().add(p1);
 		
 		Group g2 = groupFactory.getGroup();
 		g2.setId(2);
@@ -390,7 +382,7 @@ public class PersonDaoBdTest {
 		p1.setMotDePasseHash("1111111111111111111111111111111111111111111111111111111111111111");
 		p1.setSalt("99999999");
 		p1.setSiteweb("http://google.com");
-		p1.setGroupe(g2);
+		p1.addToGroup(g2);
 		dao.savePerson(p1, true);
 		
 		List<Person> p1_1 = dao.findAllPersons(true);
@@ -415,11 +407,10 @@ public class PersonDaoBdTest {
 		g1.setId(1);
 		g1.setNomGroupe("ISL");
 		Person p1 = getMockPersonGabriel(1, g1);
-		g1.getListPerson().add(p1);
 		insertPerson(p1);
 		insertGroup(g1);
 		
-		p1.setGroupe(null);
+		p1.addToGroup(null);
 		dao.savePerson(p1, true);
 		List<Person> p1_1 = dao.findAllPersons(true);
 		List<Group> g1_1 = dao.findAllGroups(true);
@@ -433,19 +424,10 @@ public class PersonDaoBdTest {
 	@Test(timeout = 10000)
 	public void testSaveGroup() throws SQLException, ParseException{
 		Group g1 = groupFactory.getGroup();
-		Person p1 = personFactory.getPerson();
-		
-		p1.setId(1);
-		p1.setNom("Gouverneur"); 
-		p1.setPrenom("Sébastien"); 
-		p1.setEmail("seb@gouv.com"); 
-		p1.setDateNaissance("28/09/1991"); 
-		p1.setSiteweb("http://sebgouv.com"); 
-		p1.setGroupe(g1);
+		Person p1 = getMockPersonSebastien(1, g1);
 		
 		g1.setId(0);
 		g1.setNomGroupe("ISL");
-		g1.getListPerson().add(p1);
 		
 		insertPerson(p1);
 		dao.saveGroup(g1, true);
@@ -466,40 +448,25 @@ public class PersonDaoBdTest {
 		listGroup = dao.findAllGroups(true);
 		assertEquals(listGroup.get(0).getId(), 1);
 		assertEquals(listGroup.get(0).getNomGroupe(), "FSI");
-
+		p = listGroup.get(0).getListPerson().get(0);
+		assertEquals(p.getId(), 1);
+		assertEquals(p.getNom(), "Gouverneur"); 
+		assertEquals(p.getPrenom(), "Sébastien");
+		assertEquals(p.getGroupe(), listGroup.get(0));
 	}
 	
 	@Test(timeout = 10000)
 	public void testSaveGroupNotMaxId() throws SQLException, ParseException{
 		Group g1 = groupFactory.getGroup();
 		Group g2 = groupFactory.getGroup();
-		Person p1 = personFactory.getPerson();
-		Person p2 = personFactory.getPerson();
-		
-		p1.setId(1);
-		p1.setNom("Gouverneur"); 
-		p1.setPrenom("Sébastien"); 
-		p1.setEmail("seb@gouv.com"); 
-		p1.setDateNaissance("28/09/1991"); 
-		p1.setSiteweb("http://sebgouv.com"); 
-		p1.setGroupe(g2);
-		
-		p2.setId(2);
-		p2.setNom("Ladet"); 
-		p2.setPrenom("Gabriel"); 
-		p2.setEmail("gabriel@ladet.net");
-		p2.setDateNaissance("22/02/1993"); 
-		p2.setSiteweb("http://ladet.net");
-		p2.setGroupe(g2);
-		
+		Person p1 = getMockPersonSebastien(1, g2);
+		Person p2 = getMockPersonGabriel(2, g2);
 		
 		g1.setId(2);
 		g1.setNomGroupe("ISL");
 		
 		g2.setId(1);
 		g2.setNomGroupe("FSI");
-		g2.getListPerson().add(p1);
-		g2.getListPerson().add(p2);
 		
 		insertPerson(p1);
 		insertPerson(p2);
@@ -528,6 +495,34 @@ public class PersonDaoBdTest {
 		assertEquals(p.getNom(), "Ladet"); 
 		assertEquals(p.getPrenom(), "Gabriel");
 		assertEquals(p.getGroupe(), listGroup.get(0));
+	}
+	
+	@Test
+	public void testSaveGroupUnregisterUser() throws SQLException, ParseException{
+		Group g1 = groupFactory.getGroup();
+		Person p1 = getMockPersonGabriel(1, g1);
+		
+		g1.setId(1);
+		g1.setNomGroupe("FSI");
+		insertPerson(p1);
+		insertGroup(g1);
+		
+		p1.removeFromGroup();
+		dao.saveGroup(g1, true);
+		
+		List<Group> listGroup = dao.findAllGroups(true);
+		assertEquals(listGroup.size(), 1);
+		assertEquals(listGroup.get(0).getId(), 1);
+		assertEquals(listGroup.get(0).getNomGroupe(), "FSI");
+		assertEquals(listGroup.get(0).getListPerson().size(), 0);
+		
+		List<Person> p1_1 = dao.findAllPersons(true);
+		assertEquals(p1_1.size(), 1);
+		assertEquals(p1_1.get(0).getId(), 1);
+		assertEquals(p1_1.get(0).getNom(), "Ladet"); 
+		assertEquals(p1_1.get(0).getPrenom(), "Gabriel");
+		assertNull(p1_1.get(0).getGroupe());
+		
 	}
 	
 

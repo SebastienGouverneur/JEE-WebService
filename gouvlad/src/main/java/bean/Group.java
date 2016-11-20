@@ -38,4 +38,17 @@ public class Group {
 	public HashMap<Integer, Group> getGroups(){
 		return groupSet;
 	}
+
+	protected void removeFromPersonList(Person person) {
+		this.listPerson.remove(person);
+	}
+
+	protected void addToPersonList(Person person) {
+		this.listPerson.add(person);
+		
+	}
+	
+	public void addPerson(Person person){
+		person.addToGroup(this);
+	}
 }

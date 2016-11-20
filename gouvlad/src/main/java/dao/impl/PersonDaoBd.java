@@ -23,6 +23,10 @@ import bean.Person;
 import dao.IPersonDao;
 
 
+/**
+ * @authors Gabriel Ladet & Sébastien Gouverneur
+ *
+ */
 @Service
 public class PersonDaoBd implements IPersonDao {
 	
@@ -38,25 +42,56 @@ public class PersonDaoBd implements IPersonDao {
 	
 	@Autowired
 	private IGroupFactory groupFactory;
-
 	
-	
+	/**
+	 * Constructor of the PersonDaoBd class
+	 * 
+	 * @throws SQLException if the connection failed
+	 */
 	public PersonDaoBd() throws SQLException{
 		connection = DriverManager.getConnection(url, user, password);
 	}
 	
+	/**
+	 * Overloaded method used to catch the data in the production tables 
+	 * and find all the groups in there
+	 * 
+	 * @return the main method findAllGroups(Groupe, AppartenancePersonneGroupe, Personne)
+	 * @throws SQLException if an error occurs while polling the database
+	 */
 	public List<Group> findAllGroups() throws SQLException{
 		return findAllGroups(Resources.getString("KeyGroup"),
 				Resources.getString("KeyBelong"), 
 				Resources.getString("KeyPerson"));
 	}
 	
+	/**
+	 * Overloaded method used to catch the data in the test tables 
+	 * and find all the groups in there
+	 * 
+	 * @param test
+	 * @return the main method findAllGroups(GroupeTest, AppartenancePersonneGroupeTest, PersonneTest)
+	 * @throws SQLException if an error occurs while polling the database
+	 */
 	public List<Group> findAllGroups(boolean test) throws SQLException {
 		return findAllGroups(Resources.getString("KeyGroupTest"), 
 				Resources.getString("KeyBelongTest"), 
 				Resources.getString("KeyPersonTest"));
 	}
 
+	/**
+	 * Returns a list containing all information about all groups stored in database sorted in ascending order of identifiers. 
+	 * The instantiated objects must therefore contain the id, the name of the group but also the list of the persons that belong to the group. 
+	 * The list of people is sorted in ascending order of identifiers. 
+	 * If no group is registered, the method returns an empty list. 
+	 * If a group contains no people, the attribute corresponding to the list of people is an empty list
+	 * 
+	 * @param tableNameGroup
+	 * @param tableNameBelongGroupPerson
+	 * @param tableNamePerson
+	 * @return a List<Group> groupList of all the groups found by the query
+	 * @throws SQLException if an error occurs while polling the database
+	 */
 	public List<Group> findAllGroups(String tableNameGroup, 
 									 String tableNameBelongGroupPerson, 
 									 String tableNamePerson) throws SQLException {
@@ -79,7 +114,6 @@ public class PersonDaoBd implements IPersonDao {
 				mapGroup.put(g.getId(), g);
 				groupList.add(g);
 			}
-			
 			if (rs.getObject("person.id-personne") != null){
 				Person p = personFactory.getPerson();
 				p.setId(rs.getInt("person.id-personne"));
@@ -92,24 +126,46 @@ public class PersonDaoBd implements IPersonDao {
 				p.setSalt(rs.getString("person.salt"));
 				p.addToGroup(g);
 			}
-			
-			
 		}
 		return groupList;
 	}
-
+	
+	/**
+	 * Overloaded method used to catch the data in the production tables 
+	 * and find all the persons in there
+	 * 
+	 * @return the main method findAllPersons(Personne, AppartenancePersonneGroupe, Groupe)
+	 * @throws SQLException if an error occurs while polling the database
+	 */
 	public List<Person> findAllPersons() throws SQLException{
 		return findAllPersons(Resources.getString("KeyPerson"), 
 							  Resources.getString("KeyBelong"),
 							  Resources.getString("KeyGroup"));
 	}
 	
+	/**
+	 * Overloaded method used to catch the data in the test tables 
+	 * and find all the persons in there
+	 * 
+	 * @param test
+	 * @return the main method findAllPersons(PersonneTest, AppartenancePersonneGroupeTest, GroupeTest)
+	 * @throws SQLException if an error occurs while polling the database
+	 */
 	public List<Person> findAllPersons(boolean test) throws SQLException {
 		return findAllPersons(Resources.getString("KeyPersonTest"),
 							  Resources.getString("KeyBelongTest"),
 							  Resources.getString("KeyGroupTest"));
 	}
 	
+	/**
+	 * Returns a list of the persons found in the chosen tables
+	 * 
+	 * @param tableNamePerson
+	 * @param tableNameBelongGroupPerson
+	 * @param tableNameGroup
+	 * @return a List<Person> of all the persons found by the query
+	 * @throws SQLException if an error occurs while polling the database
+	 */
 	public List<Person> findAllPersons(String tableNamePerson, 
 									   String tableNameBelongGroupPerson,
 									   String tableNameGroup) throws SQLException {
@@ -140,25 +196,56 @@ public class PersonDaoBd implements IPersonDao {
 					g.setNomGroupe(rs.getString("groupe.nom-groupe"));
 					mapGroup.put(g.getId(), g);	
 				}
-				
 				p.addToGroup(mapGroup.get(rs.getInt("groupe.id-groupe")));
 			}
 		}
 		return personList;
 	}
-
+	
+	/**
+	 * Overloaded method used to catch the data in the production tables 
+	 * and find all the persons in there
+	 * 
+	 * @param id
+	 * @return the main method findPerson(Personne, AppartenancePersonneGroupe, Groupe)
+	 * @throws SQLException if an error occurs while polling the database
+	 */
 	public Person findPerson(int id) throws SQLException, NotFoundPersonException {
 		return findPerson(id, Resources.getString("KeyPerson"),
 				  Resources.getString("KeyBelong"),
 				  Resources.getString("KeyGroup"));
 	}
 	
+	/**
+	 * Overloaded method used to catch the data in the test tables 
+	 * and find all the persons in there
+	 * 
+	 * @param id
+	 * @param test
+	 * @return the main method findPerson(PersonneTest, AppartenancePersonneGroupeTest, GroupeTest)
+	 * @throws SQLException if an error occurs while polling the database
+	 */
 	public Person findPerson(int id, boolean test) throws SQLException, NotFoundPersonException{
 		return findPerson(id, Resources.getString("KeyPersonTest"),
 							  Resources.getString("KeyBelongTest"),
 							  Resources.getString("KeyGroupTest"));
 	}
 	
+	/**
+	 * Returns a "Person" object containing all the basic information about the person
+	 * whose identifier is specified as a parameter.
+	 * If the person is associated with a group, a "Group" object corresponding to the group must be instantiated by being
+	 * consistent with the information present in the database.
+	 * If the person does not belong to any group, the attribute of the corresponding bean is null.
+	 * 
+	 * @param id
+	 * @param tableNamePerson
+	 * @param tableNameBelongGroupPerson
+	 * @param tableNameGroup
+	 * @return an object Person p
+	 * @throws SQLException if an error occurs while polling the database
+	 * @throws NotFoundPersonException if person does not exist while polling the database
+	 */
 	public Person findPerson(int id, 
 							 String tableNamePerson, 
 							 String tableNameBelongGroupPerson,
@@ -189,10 +276,17 @@ public class PersonDaoBd implements IPersonDao {
 			p.addToGroup(g);
 		}
 			return p;
-		
-		
 	}
 	
+	
+	/**
+	 * Overloaded method used to catch the data in the production tables 
+	 * and find all the persons in there
+	 * 
+	 * @param person
+	 * @return the main method savePerson(Personne, AppartenancePersonneGroupe, Groupe, false)
+	 * @throws SQLException if an error occurs while polling the database
+	 */
 	public void savePerson(Person person) throws SQLException, ParseException {
 		savePerson(person, Resources.getString("KeyPerson"),
 						   Resources.getString("keyBelong"),
@@ -201,6 +295,14 @@ public class PersonDaoBd implements IPersonDao {
 		
 	}
 	
+	/**
+	 * Overloaded method used to catch the data in the test tables 
+	 * and find all the persons in there
+	 * 
+	 * @param person
+	 * @return the main method savePerson(PersonneTest, AppartenancePersonneGroupeTest, GroupeTest, true)
+	 * @throws SQLException if an error occurs while polling the database
+	 */
 	public void savePerson(Person person, boolean test) throws SQLException, ParseException{
 		savePerson(person, Resources.getString("KeyPersonTest"),
 						   Resources.getString("KeyBelongTest"),
@@ -209,11 +311,36 @@ public class PersonDaoBd implements IPersonDao {
 						   );
 	}
 	
+	/**
+	 * Returns a String representing a date changing its format by parsing it.
+	 * For example, the date "28/09/1991" become "1991-09-28"
+	 * 
+	 * @param date
+	 * @return a String[] of the date passed in parameter
+	 */
 	private String formatDateForDao(String date){
 		String[] sdate = date.split("/");
 		return sdate[2]+"-"+sdate[1]+"-"+sdate[0];
 	}
-
+	
+	/**
+	 * Saves all information about the "Person" object specified in the parameter. 
+	 * If the identifier of the person is less than or equal to zero, the method inserts a new entry in the "Person" table 
+	 * by assigning an identifier according to the rule of the auto-increment and then assigns this value to the object in memory.
+	 * If the identifier of the person is greater than zero and no person associated with this identifier exists in the database, 
+	 * a new entry in the table is created. 
+	 * If the identifier of the person is greater than zero and there is a person with this identifier in the database, 
+	 * the information relating to that entry is updated. In addition, if the person is associated with a group, 
+	 * the group information is updated in the database.
+	 * 
+	 * @param person
+	 * @param tableNamePerson
+	 * @param tableNameBelong
+	 * @param tableNameGroup
+	 * @param test
+	 * @throws SQLException if an error occurs while polling the database
+	 * @throws ParseException if an error occurs while using the formatDateForDao function to parse the format date
+	 */
 	public void savePerson(Person person,
 							String tableNamePerson,
 							String tableNameBelong,
@@ -235,9 +362,7 @@ public class PersonDaoBd implements IPersonDao {
 			ResultSet rs = st2.executeQuery("SELECT `id-personne` FROM "+tableNamePerson+" ORDER BY `id-personne` DESC LIMIT 0,1");
 			rs.next();
 			person.setId(rs.getInt(1));
-			
-		}
-		else {
+		} else {
 			st = connection.prepareStatement("REPLACE INTO "+tableNamePerson+" VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
 			st.setInt(1, person.getId());
 			st.setString(2, person.getNom());
@@ -249,10 +374,6 @@ public class PersonDaoBd implements IPersonDao {
 			st.setString(8, person.getSalt());
 			st.execute();
 		}
-		
-		
-		
-		
 		if (person.getGroupe() != null){
 			st = connection.prepareStatement("REPLACE INTO "+tableNameBelong+" VALUES(?, ?)");
 			st.setInt(1, person.getId());
@@ -262,24 +383,54 @@ public class PersonDaoBd implements IPersonDao {
 				saveGroup(person.getGroupe(), true);
 			else
 				saveGroup(person.getGroupe());
-		}
-		else {
+		} else {
 			st = connection.prepareStatement("DELETE FROM "+tableNameBelong+" WHERE `id-personne` = ?");
 			st.setInt(1, person.getId());
 			st.execute();
 		}
-		
 	}
 	
+	/**
+	 * Overloaded method used to catch the data in the production tables 
+	 * and find all the persons in there
+	 * 
+	 * @param group
+	 * @return the main method savePerson(Groupe, AppartenancePersonneGroupe)
+	 * @throws SQLException if an error occurs while polling the database
+	 */
 	public void saveGroup(Group group) throws SQLException {
 		saveGroup(group, Resources.getString("KeyGroup"), Resources.getString("KeyBelong"));
 		
 	}
 	
+	/**
+	 * Overloaded method used to catch the data in the test tables 
+	 * and find all the persons in there
+	 * 
+	 * @param group
+	 * @param test
+	 * @return the main method savePerson(GroupeTest, AppartenancePersonneGroupeTest)
+	 * @throws SQLException if an error occurs while polling the database
+	 */
 	public void saveGroup(Group group, boolean test) throws SQLException{
 		saveGroup(group, Resources.getString("KeyGroupTest"), Resources.getString("KeyBelongTest"));
 	}
 	
+	/**
+	 * Saves all information about the "Group" object specified in the parameter.
+	 * If the identifier of is less than or equal to zero, the method inserts a new entry in the "Group" table
+	 * by assigning an identifier according to the rule of the auto-increment and then assigns this value to the object in memory. 
+	 * If the group identifier is greater than zero and no group associated with that identifier exists in the database,
+	 * a new entry in the table is created. 
+	 * If the group identifier is greater than zero and there is a group with this identifier in the database,
+	 * the information relating to that entry is updated. In addition, information about person / group memberships is also updated
+	 * in the table in the "AppartenancePersonneGroupe" table.
+	 * 
+	 * @param group
+	 * @param tableNameGroup
+	 * @param tableNameBelong
+	 * @throws SQLException if an error occurs while polling the database
+	 */
 	public void saveGroup(Group group, 
 						  String tableNameGroup,
 						  String tableNameBelong) throws SQLException{
@@ -301,8 +452,6 @@ public class PersonDaoBd implements IPersonDao {
 			st.setString(2, group.getNomGroupe());
 			st.execute();
 		}
-		
-		
 		/* Updates persons in the group */
 		for (Person p: group.getListPerson()){
 			st = connection.prepareStatement("REPLACE INTO "+tableNameBelong+" VALUES(?, ?)");
@@ -310,16 +459,19 @@ public class PersonDaoBd implements IPersonDao {
 			st.setInt(2, group.getId());
 			st.executeUpdate();
 		}
-		
 		/* Removes persons who don't belong anymore to the group */
 		String builtPersonListForSQLRequest = buildListForSQL(group.getListPerson());
 		st = connection.prepareStatement("DELETE FROM "+tableNameBelong+" WHERE `id-groupe`=? "+builtPersonListForSQLRequest);
 		st.setInt(1, group.getId());
 		st.execute();
-		
-		
 	}
 	
+	/**
+	 * Return a String that complete the saveGroup function if a person don't belong anymore to the group
+	 * 
+	 * @param list
+	 * @return String res
+	 */
 	private String buildListForSQL(List<Person> list){
 		if (list.size() == 0)
 			return "";
@@ -327,13 +479,16 @@ public class PersonDaoBd implements IPersonDao {
 		for (Person p: list){
 			res += p.getId()+",";
 		}
-		
 		res = res.substring(0, res.length()-1); /* Removes last comma */
 		return res += ")";
 	}
 	
+	/**
+	 * Return the current connection of the dao
+	 * 
+	 * @return connection
+	 */
 	public Connection getConnection(){
 		return connection;
 	}
-
 }

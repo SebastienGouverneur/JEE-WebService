@@ -1,5 +1,6 @@
 package dao.impl;
 
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,7 +26,7 @@ import dao.IPersonDao;
 
 
 /**
- * @authors Gabriel Ladet & Sébastien Gouverneur
+ * @authors Gabriel Ladet & SÃ©bastien Gouverneur
  *
  */
 @Service

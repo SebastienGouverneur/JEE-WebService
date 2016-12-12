@@ -5,9 +5,8 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
 
-import dao.impl.NotFoundPersonException;
-
 import bean.Person;
+import dao.impl.NotFoundPersonException;
 import bean.Group;
 
 public interface IPersonDao {

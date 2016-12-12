@@ -4,11 +4,11 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 public class Resources {
-	private static final String BUNDLE_NAME = "dao.impl.messages";
+	private static String BUNDLE_NAME = "dao.impl.messages";
 
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+	private static ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
-	private Resources() {
+	public Resources() {
 	}
 
 	public static String getString(String key) {

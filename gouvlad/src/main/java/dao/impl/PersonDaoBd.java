@@ -23,6 +23,7 @@ import bean.IGroupFactory;
 import bean.IPersonFactory;
 import bean.Person;
 import dao.IPersonDao;
+import dao.impl.Resources;
 
 
 
@@ -34,7 +35,6 @@ import dao.IPersonDao;
 @Service
 public class PersonDaoBd implements IPersonDao {
 	
-	@SuppressWarnings("unused")
 	private String driverName = Resources.getString("KeyDriverName");
 	private String url		  = Resources.getString("KeyUrl");
 	private String user       = Resources.getString("KeyUser"); 
@@ -51,8 +51,10 @@ public class PersonDaoBd implements IPersonDao {
 	 * Constructor of the PersonDaoBd class
 	 * 
 	 * @throws SQLException if the connection failed
+	 * @throws ClassNotFoundException 
 	 */
-	public PersonDaoBd() throws SQLException{
+	public PersonDaoBd() throws SQLException, ClassNotFoundException{
+		Class.forName("com.mysql.jdbc.Driver");
 		connection = DriverManager.getConnection(url, user, password);
 	}
 	

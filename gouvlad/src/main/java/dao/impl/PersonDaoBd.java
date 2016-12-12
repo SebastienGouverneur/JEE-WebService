@@ -15,14 +15,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
-
 
 import bean.Group;
 import bean.IGroupFactory;
 import bean.IPersonFactory;
 import bean.Person;
 import dao.IPersonDao;
+
+
 
 
 /**
@@ -206,7 +208,7 @@ public class PersonDaoBd implements IPersonDao {
 	
 	/**
 	 * Overloaded method used to catch the data in the production tables 
-	 * and find all the persons in there
+	 * and find a specific person in there
 	 * 
 	 * @param id
 	 * @return the main method findPerson(Personne, AppartenancePersonneGroupe, Groupe)
@@ -220,7 +222,7 @@ public class PersonDaoBd implements IPersonDao {
 	
 	/**
 	 * Overloaded method used to catch the data in the test tables 
-	 * and find all the persons in there
+	 * and find a specific person in there
 	 * 
 	 * @param id
 	 * @param test
@@ -283,7 +285,87 @@ public class PersonDaoBd implements IPersonDao {
 	
 	/**
 	 * Overloaded method used to catch the data in the production tables 
-	 * and find all the persons in there
+	 * and find a specific person in there
+	 * 
+	 * @param emailAddress
+	 * @return the main method findPerson(Personne, AppartenancePersonneGroupe, Groupe)
+	 * @throws SQLException if an error occurs while polling the database
+	 */
+	public Person findPerson(String emailAddress) throws SQLException, NotFoundPersonException {
+		return findPerson(emailAddress, Resources.getString("KeyPerson"),
+				  Resources.getString("KeyBelong"),
+				  Resources.getString("KeyGroup"));
+	}
+	
+	
+	
+	/**
+	 * Overloaded method used to catch the data in the test tables 
+	 * and find a specific person in there
+	 * 
+	 * @param emailAddress
+	 * @param test
+	 * @return the main method findPerson(PersonneTest, AppartenancePersonneGroupeTest, GroupeTest)
+	 * @throws SQLException if an error occurs while polling the database
+	 */
+	public Person findPerson(String emailAddress, boolean test) throws SQLException, NotFoundPersonException{
+		return findPerson(emailAddress, Resources.getString("KeyPersonTest"),
+						  Resources.getString("KeyBelongTest"),
+						  Resources.getString("KeyGroupTest"));
+	}
+	
+	
+	/**
+	 * Returns a "Person" object containing all the basic information about the person
+	 * whose identifier is specified as a parameter.
+	 * If the person is associated with a group, a "Group" object corresponding to the group must be instantiated by being
+	 * consistent with the information present in the database.
+	 * If the person does not belong to any group, the attribute of the corresponding bean is null.
+	 * 
+	 * @param emailAddress
+	 * @param tableNamePerson
+	 * @param tableNameBelongGroupPerson
+	 * @param tableNameGroup
+	 * @return an object Person p
+	 * @throws SQLException if an error occurs while polling the database
+	 * @throws NotFoundPersonException if person does not exist while polling the database
+	 */
+	public Person findPerson(String emailAddress,
+							 String tableNamePerson, 
+							 String tableNameBelongGroupPerson,
+							 String tableNameGroup) throws SQLException, NotFoundPersonException{
+		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		PreparedStatement st = connection.prepareStatement("SELECT * FROM "+tableNamePerson+" " +
+				"AS person LEFT OUTER JOIN "+ tableNameBelongGroupPerson+" AS belong ON " +
+				"person.`id-personne` = belong.`id-personne` " +
+				"LEFT OUTER JOIN "+tableNameGroup+" AS groupe ON belong.`id-groupe`=groupe.`id-groupe` " +
+				"WHERE person.`email` = ?");
+		st.setString(1, emailAddress);
+		ResultSet rs = st.executeQuery();
+		if (!rs.next())
+			throw new NotFoundPersonException();
+		Person p = personFactory.getPerson();
+		p.setId(rs.getInt("person.id-personne"));
+		p.setNom(rs.getString("person.nom"));
+		p.setPrenom(rs.getString("person.prenom"));
+		p.setEmail(rs.getString("person.email"));
+		p.setSiteweb(rs.getString("person.url-web"));
+		p.setDateNaissance(df.format(rs.getDate("person.date-naissance")));
+		p.setMotDePasseHash(rs.getString("person.mot-de-passe-hash"));
+		p.setSalt(rs.getString("person.salt"));
+		if (rs.getObject("groupe.id-groupe") != null){
+			Group g = groupFactory.getGroup();
+			g.setId(rs.getInt("groupe.id-groupe"));
+			g.setNomGroupe(rs.getString("groupe.nom-groupe"));
+			p.addToGroup(g);
+		}
+		return p;
+	}
+	
+	
+	/**
+	 * Overloaded method used to catch the data in the production tables 
+	 * and save a specific person in there
 	 * 
 	 * @param person
 	 * @return the main method savePerson(Personne, AppartenancePersonneGroupe, Groupe, false)
@@ -299,7 +381,7 @@ public class PersonDaoBd implements IPersonDao {
 	
 	/**
 	 * Overloaded method used to catch the data in the test tables 
-	 * and find all the persons in there
+	 * and save a specific person in there
 	 * 
 	 * @param person
 	 * @return the main method savePerson(PersonneTest, AppartenancePersonneGroupeTest, GroupeTest, true)
@@ -493,4 +575,6 @@ public class PersonDaoBd implements IPersonDao {
 	public Connection getConnection(){
 		return connection;
 	}
+
+	
 }

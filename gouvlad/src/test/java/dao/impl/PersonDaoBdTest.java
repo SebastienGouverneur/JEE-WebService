@@ -25,6 +25,8 @@ import bean.Person;
 import dao.IPersonDao;
 
 
+
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/spring.xml")
 public class PersonDaoBdTest {
@@ -257,7 +259,7 @@ public class PersonDaoBdTest {
 	}
 	
 	@Test(timeout = 10000)
-	public void testFindPerson() throws SQLException, ParseException, NotFoundPersonException{
+	public void testFindPersonById() throws SQLException, ParseException, NotFoundPersonException{
 		Group g1 = groupFactory.getGroup();
 		g1.setId(2);
 		g1.setNomGroupe("FSI");
@@ -286,8 +288,42 @@ public class PersonDaoBdTest {
 	}
 	
 	@Test(timeout = 10000, expected=NotFoundPersonException.class)
-	public void testNotFoundPerson() throws SQLException, NotFoundPersonException{
+	public void testNotFoundPersonById() throws SQLException, NotFoundPersonException{
 		dao.findPerson(1, true);
+	}
+	
+	@Test(timeout = 10000)
+	public void testFindPersonByEmailAddress() throws SQLException, ParseException, NotFoundPersonException{
+		Group g1 = groupFactory.getGroup();
+		g1.setId(2);
+		g1.setNomGroupe("FSI");
+		
+		Person p1 = getMockPersonSebastien(1, null);
+		Person p2 = getMockPersonGabriel(2, g1);
+
+		insertPerson(p1);
+		insertPerson(p2);
+		insertGroup(g1);
+		
+		Person p3 = dao.findPerson("seb@gouv.com", true);
+		Person p4 = dao.findPerson("gabriel@ladet.net", true);
+		
+		assertEquals(p3.getId(), 1);
+		assertEquals(p3.getNom(), "Gouverneur"); 
+		assertEquals(p3.getPrenom(), "Sébastien");
+		assertNull(p3.getGroupe());
+		
+		assertEquals(p4.getId(), 2);
+		assertEquals(p4.getNom(), "Ladet"); 
+		assertEquals(p4.getPrenom(), "Gabriel");
+		assertEquals(p4.getGroupe().getId(), 2);
+		assertEquals(p4.getGroupe().getNomGroupe(), "FSI");
+		
+	}
+	
+	@Test(timeout = 10000, expected=NotFoundPersonException.class)
+	public void testNotFoundPersonByEmailAddress() throws SQLException, NotFoundPersonException{
+		dao.findPerson("gab@l.net", true);
 	}
 	
 	@Test(timeout = 10000)

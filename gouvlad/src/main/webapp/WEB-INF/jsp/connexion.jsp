@@ -2,7 +2,7 @@
 <c:set var="pageTitle" value="Connexion" scope="request" />
 <jsp:include page="entete_xhtml.jsp" />
 <form method="post" action="/gouvlad/annuaire/connexion">
-Vous devez être connecté pour accéder à l'annuaire.<br /><br />
+<p>Vous devez être connecté pour accéder à l'annuaire.</p><br /><br />
 <c:if test="${not empty erreur}" >
 Le couple adresse e-mail / mot de passe est incorrect.<br />
 </c:if>

@@ -85,7 +85,8 @@ public class AnnuaireController {
     @RequestMapping(value = "/style.css", method = RequestMethod.GET)
     public ModelAndView handleRequestStyle(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
-    	
+    	response.setContentType("text/css");
+    	response.flushBuffer();
 		return new ModelAndView("style");
 
     }

@@ -6,6 +6,6 @@
      <title><c:out value="${requestScope.pageTitle}" /></title>
      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
      <meta http-equiv="Content-Language" content="fr" />
-     <link rel="stylesheet" type="text/css" href="style.css"  />
+     <link rel="stylesheet" type="text/css" href="/gouvlad/annuaire/style.css"  />
 </head>
 <body>

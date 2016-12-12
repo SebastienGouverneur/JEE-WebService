@@ -1,11 +1,12 @@
 body
 {
-color: red;
-background-color: black;
-text-align: center;
+	color:red;
+	background-color:black;
+	text-align:center;
 }
-
 .noBorder
 {
-border: none;
+	border:none;
 }
+
+p { color: green; }

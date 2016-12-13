@@ -20,6 +20,7 @@ public interface IPersonDao {
 	Person findPerson(String emailAddress) throws SQLException, NotFoundPersonException;
 	Person findPerson(String emailAddress, boolean test) throws SQLException, NotFoundPersonException;
 	void savePerson(Person person, boolean test) throws SQLException, ParseException;
+	public void savePerson(Person person) throws SQLException, ParseException;
 	void saveGroup(Group group) throws SQLException;
 	void saveGroup(Group group, boolean test) throws SQLException;
 	Connection getConnection();

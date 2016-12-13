@@ -375,8 +375,8 @@ public class PersonDaoBd implements IPersonDao {
 	 */
 	public void savePerson(Person person) throws SQLException, ParseException {
 		savePerson(person, Resources.getString("KeyPerson"),
-						   Resources.getString("keyBelong"),
-						   Resources.getString("keyGroup"),
+						   Resources.getString("KeyBelong"),
+						   Resources.getString("KeyGroup"),
 						   false);
 		
 	}

@@ -6,12 +6,23 @@
 	<br />
 	<br />
 	<c:if test="${not empty erreur}">
-Veuillez remplir tous les champs avant de valider.<br />
+		<c:if test="${erreur == 1}">
+			Erreur: la date de naissance doit être de la forme jj/mm/aaaa et doit correspondre à une date valide.
+		</c:if>
+		<c:if test="${erreur == 2}">
+			Erreur: les deux mots de passe ne correspondent pas.
+		</c:if>
+		<c:if test="${erreur == 3}">
+			Erreur: le format de l'adresse e-mail est invalide.
+		</c:if>
+		<c:if test="${erreur == 4}">
+			Erreur: Cette adresse e-mail est déjà utilisée.
+		</c:if>
 	</c:if>
 	<table class="tableSignup">
 		<tr>
 			<td>Nom</td>
-			<td><input type="text" name="firstname" /></td>
+			<td><input type="text" name="firstname" value="" /></td>
 		</tr>
 		<br />
 		<tr>

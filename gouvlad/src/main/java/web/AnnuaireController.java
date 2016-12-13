@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -106,39 +107,42 @@ public class AnnuaireController {
     			request.getParameter("birthdate") != null &&
     			request.getParameter("createpassword") != null &&
     			request.getParameter("confirmpassword") != null){
-    			String firstName = request.getParameter("firstname");
-				String lastName = request.getParameter("lastname");
-				String email = request.getParameter("email");
-				String webSite = request.getParameter("website");
-				String birthDate = request.getParameter("birthdate");
+    			Person p = new Person();
+				p.setNom(request.getParameter("firstname"));
+				p.setPrenom(request.getParameter("lastname"));
+				p.setEmail(request.getParameter("email"));
+				p.setSiteweb(request.getParameter("website"));
+				p.setDateNaissance(request.getParameter("birthdate"));
 				
-				String createPassword = Utils.get_SHA_512_SecurePassword(request.getParameter("createpassword"), salt);
-				String confirmPassword = Utils.get_SHA_512_SecurePassword(request.getParameter("confirmpassword"), salt);
-				if (!createPassword.equals(confirmPassword)){
-					return new ModelAndView("redirect:signup/erreur");
+				if (!Utils.isDateValid(p.getDateNaissance()) ){
+					return new ModelAndView("redirect:signup/erreur/1", "signupinfo", p);
+
 				}
 				
-				request.getSession().setAttribute("firstname", firstName);
-				request.getSession().setAttribute("lastname", lastName);
-				request.getSession().setAttribute("email", email);
-				request.getSession().setAttribute("website", webSite);
-				if (birthDate.matches("\\d{2}-\\d{2}-\\d{4}"))
-					request.getSession().setAttribute("birthdate", birthDate);
-				else
-					System.out.println("wrong format date");
-				request.getSession().setAttribute("createpassword", createPassword);
+				String createPassword = Utils.get_SHA_512_SecurePassword(request.getParameter("createpassword"), salt);
+				if (!request.getParameter("createpassword").equals(request.getParameter("confirmpassword"))){
+					return new ModelAndView("redirect:signup/erreur/2", "signupinfo", p);
+				}
 				
-				Person p = new Person();
-				p.setPrenom(firstName);
-				p.setNom(lastName);
-				p.setEmail(email);
-				p.setSiteweb(webSite);
-				p.setDateNaissance(birthDate);
+				if (!Utils.isValidEmailAddress(p.getEmail())){
+					return new ModelAndView("redirect:signup/erreur/3","signupinfo", p);
+				}
+				
+				try {
+					dao.findPerson(p.getEmail());
+					/* the e-mail address is already used */
+					return new ModelAndView("redirect:signup/erreur/4", "signupinfo", p);
+					
+				} catch (NotFoundPersonException n){
+					/* Nothing to do */
+				}
+				
+				
 				p.setMotDePasseHash(createPassword);
 				p.setSalt(salt);
 				
-				// sauvegarde la personne dans la table PersonneTest
-				dao.savePerson(p, true);
+				dao.savePerson(p);
+				request.getSession().setAttribute("Person", p);
 				
 				return new ModelAndView("redirect:person");
     			
@@ -149,10 +153,9 @@ public class AnnuaireController {
     		
     }
     
-    @RequestMapping(value = "/signup/erreur", method = RequestMethod.GET)
-    public ModelAndView handleSignupRequestWithError(HttpServletRequest request,
-            HttpServletResponse response) throws ServletException, IOException {
-		return new ModelAndView("signup", "erreur", 1);
+    @RequestMapping(value = "/signup/erreur/{numError}", method = RequestMethod.GET)
+    public ModelAndView handleSignupRequestWithError(@PathVariable("numError") Integer numError) throws ServletException, IOException {
+		return new ModelAndView("signup", "erreur", numError);
 
     }
     

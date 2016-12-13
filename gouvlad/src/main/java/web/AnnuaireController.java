@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import bean.IPersonFactory;
 import bean.Person;
 import dao.IPersonDao;
 import dao.impl.NotFoundPersonException;
@@ -39,6 +40,9 @@ public class AnnuaireController {
     
     @Autowired
 	private IPersonDao dao;
+    
+    @Autowired
+	private IPersonFactory personFactory;
     
     @RequestMapping(value = "/liste", method = RequestMethod.GET)
     public ModelAndView handleListRequest(HttpServletRequest request,
@@ -89,7 +93,9 @@ public class AnnuaireController {
     @RequestMapping(value = "/connexion/erreur", method = RequestMethod.GET)
     public ModelAndView handleConnectionRequestWithError(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
-		return new ModelAndView("connexion", "erreur", 1);
+    	Person p = personFactory.getPerson();
+    	p.setNom("monNom");
+		return new ModelAndView("connexion", "erreur", p);
 
     }
     
@@ -107,31 +113,43 @@ public class AnnuaireController {
     			request.getParameter("birthdate") != null &&
     			request.getParameter("createpassword") != null &&
     			request.getParameter("confirmpassword") != null){
-    			Person p = new Person();
+    			
+    			Person p = personFactory.getPerson();
 				p.setNom(request.getParameter("firstname"));
 				p.setPrenom(request.getParameter("lastname"));
 				p.setEmail(request.getParameter("email"));
 				p.setSiteweb(request.getParameter("website"));
 				p.setDateNaissance(request.getParameter("birthdate"));
-				
-				if (!Utils.isDateValid(p.getDateNaissance()) ){
-					return new ModelAndView("redirect:signup/erreur/1", "signupinfo", p);
+					if (p.getNom().equals("") || p.getPrenom().equals("") || p.getEmail().equals("")
+							|| request.getParameter("createpassword").equals("")  
+							|| request.getParameter("confirmpassword").equals("") 
+							|| p.getSiteweb().equals("")
+							|| p.getDateNaissance().equals("")){
+						SignUpError error = new SignUpError("Erreur: Veuillez remplir tous les champs.", p);
+						return new ModelAndView("signup", "signupinfo", error);
 
+					}
+				if (!Utils.isDateValid(p.getDateNaissance()) ){
+					SignUpError error = new SignUpError("Erreur: la date de naissance doit être de la forme jj/mm/aaaa et doit correspondre à une date valide.", p);
+					return new ModelAndView("signup", "signupinfo", error);
 				}
 				
 				String createPassword = Utils.get_SHA_512_SecurePassword(request.getParameter("createpassword"), salt);
 				if (!request.getParameter("createpassword").equals(request.getParameter("confirmpassword"))){
-					return new ModelAndView("redirect:signup/erreur/2", "signupinfo", p);
+					SignUpError error = new SignUpError("Erreur: les deux mots de passe ne correspondent pas.", p);
+					return new ModelAndView("signup", "signupinfo", error);
 				}
 				
 				if (!Utils.isValidEmailAddress(p.getEmail())){
-					return new ModelAndView("redirect:signup/erreur/3","signupinfo", p);
+					SignUpError error = new SignUpError("Erreur: le format de l'adresse e-mail est invalide.", p);
+					return new ModelAndView("signup", "signupinfo", error);
 				}
 				
 				try {
 					dao.findPerson(p.getEmail());
 					/* the e-mail address is already used */
-					return new ModelAndView("redirect:signup/erreur/4", "signupinfo", p);
+					SignUpError error = new SignUpError("Erreur: Cette adresse e-mail est déjà utilisée.", p);
+					return new ModelAndView("signup", "signupinfo", error);
 					
 				} catch (NotFoundPersonException n){
 					/* Nothing to do */
@@ -153,11 +171,11 @@ public class AnnuaireController {
     		
     }
     
-    @RequestMapping(value = "/signup/erreur/{numError}", method = RequestMethod.GET)
+    /*@RequestMapping(value = "/signup/erreur/{numError}", method = RequestMethod.GET)
     public ModelAndView handleSignupRequestWithError(@PathVariable("numError") Integer numError) throws ServletException, IOException {
 		return new ModelAndView("signup", "erreur", numError);
 
-    }
+    }*/
     
     @RequestMapping(value = "/style.css", method = RequestMethod.GET)
     public ModelAndView handleRequestStyle(HttpServletRequest request,

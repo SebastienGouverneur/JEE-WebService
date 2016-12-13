@@ -95,7 +95,9 @@ public class AnnuaireController {
     @RequestMapping(value = "/signup", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView handleSignupRequest(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException, SQLException, NotFoundPersonException, ParseException {
-
+    		
+    		String salt = Utils.randomSalt(8);
+    	
     		if (request.getMethod().equals("POST") && 
     			request.getParameter("firstname") != null &&
     			request.getParameter("lastname") != null &&
@@ -109,10 +111,6 @@ public class AnnuaireController {
 				String email = request.getParameter("email");
 				String webSite = request.getParameter("website");
 				String birthDate = request.getParameter("birthdate");
-				/*SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-				Date birthDate = sdf.parse(birthDateString);*/
-				
-				String salt = "SALT";
 				
 				String createPassword = Utils.get_SHA_512_SecurePassword(request.getParameter("createpassword"), salt);
 				String confirmPassword = Utils.get_SHA_512_SecurePassword(request.getParameter("confirmpassword"), salt);
@@ -124,7 +122,10 @@ public class AnnuaireController {
 				request.getSession().setAttribute("lastname", lastName);
 				request.getSession().setAttribute("email", email);
 				request.getSession().setAttribute("website", webSite);
-				request.getSession().setAttribute("birthdate", birthDate);
+				if (birthDate.matches("\\d{2}-\\d{2}-\\d{4}"))
+					request.getSession().setAttribute("birthdate", birthDate);
+				else
+					System.out.println("wrong format date");
 				request.getSession().setAttribute("createpassword", createPassword);
 				
 				Person p = new Person();

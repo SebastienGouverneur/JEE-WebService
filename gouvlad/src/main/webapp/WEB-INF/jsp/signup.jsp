@@ -31,7 +31,9 @@ Veuillez remplir tous les champs avant de valider.<br />
 		<br />
 		<tr>
 			<td>Date de naissance</td>
-			<td><input type="date" name="birthdate" placeholder="exemple : 28/09/1991" /></td>
+			<td>
+				<input type="text" pattern="\d{1,2}/\d{1,2}/\d{4}" class="datepicker" name="birthdate" value="" placeholder="exemple : 28/09/1991"/>
+			</td>
 		</tr>
 		<br />
 		<tr>

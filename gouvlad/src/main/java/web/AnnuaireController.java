@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import bean.Group;
 import bean.IPersonFactory;
 import bean.Person;
 import dao.IPersonDao;
@@ -44,15 +46,39 @@ public class AnnuaireController {
     @Autowired
 	private IPersonFactory personFactory;
     
-    @RequestMapping(value = "/liste", method = RequestMethod.GET)
-    public ModelAndView handleListRequest(HttpServletRequest request,
+    @RequestMapping(value = "/listePersonnes", method = RequestMethod.GET)
+    public ModelAndView handleListPersonsRequest(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
     	
     	if (!Utils.isConnected(request.getSession())){
     		logger.info("Returning connexion view");
     		return new ModelAndView("redirect:connexion");	
     	}
-		return new ModelAndView("annuaire");
+    	List<Person> personList;
+    	try {
+		personList = dao.findAllPersons();
+		} catch (SQLException e) {
+			return new ModelAndView("redirect:erreur_interne");
+		}
+		return new ModelAndView("annuairePersonnes", "personList", personList);
+
+    }
+    
+    @RequestMapping(value = "/listeGroupes", method = RequestMethod.GET)
+    public ModelAndView handleListGroupsRequest(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
+    	
+    	if (!Utils.isConnected(request.getSession())){
+    		logger.info("Returning connexion view");
+    		return new ModelAndView("redirect:connexion");	
+    	}
+    	List<Group> groupList;
+    	try {
+		groupList = dao.findAllGroups();
+		} catch (SQLException e) {
+			return new ModelAndView("redirect:erreur_interne");
+		}
+		return new ModelAndView("annuaireGroupes", "groupList", groupList);
 
     }
     
@@ -61,7 +87,7 @@ public class AnnuaireController {
             HttpServletResponse response) throws ServletException, IOException {
 
     		if (Utils.isConnected(request.getSession())){
-    			return new ModelAndView("redirect:liste");
+    			return new ModelAndView("redirect:listePersonnes");
     		}
     		
     		if (request.getMethod().equals("POST") && 
@@ -74,7 +100,7 @@ public class AnnuaireController {
 		    			return new ModelAndView("redirect:connexion/erreur");
 					}
 					request.getSession().setAttribute("Person", p);
-	    			return new ModelAndView("redirect:liste");
+	    			return new ModelAndView("redirect:listePersonnes");
 					
 				} catch (SQLException e) {
 	    			return new ModelAndView("redirect:erreur_interne");
@@ -93,9 +119,7 @@ public class AnnuaireController {
     @RequestMapping(value = "/connexion/erreur", method = RequestMethod.GET)
     public ModelAndView handleConnectionRequestWithError(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
-    	Person p = personFactory.getPerson();
-    	p.setNom("monNom");
-		return new ModelAndView("connexion", "erreur", p);
+		return new ModelAndView("connexion", "erreur", 1);
 
     }
     
@@ -176,6 +200,22 @@ public class AnnuaireController {
 		return new ModelAndView("signup", "erreur", numError);
 
     }*/
+    
+    @RequestMapping(value = "/afficherPersonne/{id}", method = RequestMethod.GET)
+    public ModelAndView handleDisplayPersonInfosRequest(@PathVariable("id") Integer id) throws ServletException, IOException {
+		Person p;
+    	try {
+			p = dao.findPerson(id);
+		} catch (SQLException e) {
+			return new ModelAndView("redirect:erreur_interne");
+		} catch (NotFoundPersonException e) {
+			p = personFactory.getPerson();
+			p.setId(-1);
+		}
+    	return new ModelAndView("afficherPersonne", "person", p);
+
+    }
+    
     
     @RequestMapping(value = "/style.css", method = RequestMethod.GET)
     public ModelAndView handleRequestStyle(HttpServletRequest request,

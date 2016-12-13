@@ -13,6 +13,8 @@
 <context:component-scan base-package="dao" />
 <context:component-scan base-package="bean" />
 <context:component-scan base-package="bean.impl" />
+<context:component-scan base-package="checker" />
+<context:component-scan base-package="checker.impl" />
 
 
 

@@ -1,13 +1,15 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <c:set var="pageTitle" value="Sign Up" scope="request" />
 <jsp:include page="entete_xhtml.jsp" />
-<form method="post" action="/gouvlad/annuaire/signup">
 	<p>Vous devez être connecté pour accéder à l'annuaire.</p>
 	<br />
+	<a href="/gouvlad/annuaire/connexion">Retour à la connexion</a>
 	<br />
 	<c:if test="${not empty signupinfo}">
 	${signupinfo.messageError}	
 	</c:if>
+	<form method="post" action="/gouvlad/annuaire/signup">
+	
 	<table class="tableSignup">
 		<tr>
 			<td>Nom</td>

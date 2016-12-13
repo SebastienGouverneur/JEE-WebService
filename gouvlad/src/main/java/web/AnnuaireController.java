@@ -31,6 +31,7 @@ import org.springframework.web.servlet.ModelAndView;
 import bean.Group;
 import bean.IPersonFactory;
 import bean.Person;
+import checker.IPersonDataChecker;
 import dao.IPersonDao;
 import dao.impl.NotFoundPersonException;
 
@@ -45,6 +46,9 @@ public class AnnuaireController {
     
     @Autowired
 	private IPersonFactory personFactory;
+    
+    @Autowired
+    private IPersonDataChecker personDataChecker;
     
     @RequestMapping(value = "/listePersonnes", method = RequestMethod.GET)
     public ModelAndView handleListPersonsRequest(HttpServletRequest request,
@@ -123,7 +127,7 @@ public class AnnuaireController {
 
     }
     
-    @RequestMapping(value = "/signup", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/inscription", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView handleSignupRequest(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException, SQLException, NotFoundPersonException, ParseException {
     		
@@ -149,37 +153,28 @@ public class AnnuaireController {
 							|| request.getParameter("confirmpassword").equals("") 
 							|| p.getSiteweb().equals("")
 							|| p.getDateNaissance().equals("")){
-						SignUpError error = new SignUpError("Erreur: Veuillez remplir tous les champs.", p);
-						return new ModelAndView("signup", "signupinfo", error);
+						PersonInfoException error = new PersonInfoException("Erreur: Veuillez remplir tous les champs.", p);
+						return new ModelAndView("inscription", "signupinfo", error);
 
 					}
-				if (!Utils.isDateValid(p.getDateNaissance()) ){
-					SignUpError error = new SignUpError("Erreur: la date de naissance doit être de la forme jj/mm/aaaa et doit correspondre à une date valide.", p);
-					return new ModelAndView("signup", "signupinfo", error);
-				}
-				
-				String createPassword = Utils.get_SHA_512_SecurePassword(request.getParameter("createpassword"), salt);
-				if (!request.getParameter("createpassword").equals(request.getParameter("confirmpassword"))){
-					SignUpError error = new SignUpError("Erreur: les deux mots de passe ne correspondent pas.", p);
-					return new ModelAndView("signup", "signupinfo", error);
-				}
-				
-				if (!Utils.isValidEmailAddress(p.getEmail())){
-					SignUpError error = new SignUpError("Erreur: le format de l'adresse e-mail est invalide.", p);
-					return new ModelAndView("signup", "signupinfo", error);
-				}
+					
+				try {
+					personDataChecker.editProfilePersonChecker(p, request.getParameter("createpassword"),request.getParameter("confirmpassword"));
+				} catch (PersonInfoException error) {
+					return new ModelAndView("inscription", "signupinfo", error);
+				};
 				
 				try {
 					dao.findPerson(p.getEmail());
 					/* the e-mail address is already used */
-					SignUpError error = new SignUpError("Erreur: Cette adresse e-mail est déjà utilisée.", p);
-					return new ModelAndView("signup", "signupinfo", error);
+					PersonInfoException error = new PersonInfoException("Erreur: Cette adresse e-mail est déjà utilisée.", p);
+					return new ModelAndView("inscription", "signupinfo", error);
 					
 				} catch (NotFoundPersonException n){
 					/* Nothing to do */
 				}
 				
-				
+				String createPassword = Utils.get_SHA_512_SecurePassword(request.getParameter("createpassword"), salt);
 				p.setMotDePasseHash(createPassword);
 				p.setSalt(salt);
 				
@@ -191,19 +186,24 @@ public class AnnuaireController {
 
     		} 
     		
-    		return new ModelAndView("signup");
+    		return new ModelAndView("inscription");
     		
     }
     
     /*@RequestMapping(value = "/signup/erreur/{numError}", method = RequestMethod.GET)
     public ModelAndView handleSignupRequestWithError(@PathVariable("numError") Integer numError) throws ServletException, IOException {
-		return new ModelAndView("signup", "erreur", numError);
+		return new ModelAndView("inscription", "erreur", numError);
 
     }*/
     
     @RequestMapping(value = "/afficherPersonne/{id}", method = RequestMethod.GET)
-    public ModelAndView handleDisplayPersonInfosRequest(@PathVariable("id") Integer id) throws ServletException, IOException {
-		Person p;
+    public ModelAndView handleDisplayPersonInfosRequest(@PathVariable("id") Integer id, HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
+    	if (!Utils.isConnected(request.getSession())){
+    		logger.info("Returning connexion view");
+    		return new ModelAndView("redirect:connexion");	
+    	}
+    	Person p;
     	try {
 			p = dao.findPerson(id);
 		} catch (SQLException e) {
@@ -213,6 +213,29 @@ public class AnnuaireController {
 			p.setId(-1);
 		}
     	return new ModelAndView("afficherPersonne", "person", p);
+
+    }
+    
+    @RequestMapping(value = "/editerProfil", method = RequestMethod.GET)
+    public ModelAndView handleEditingProfileRequest(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
+    	
+    	if (!Utils.isConnected(request.getSession())){
+    		logger.info("Returning connexion view");
+    		return new ModelAndView("redirect:connexion");	
+    	}
+    	
+		return new ModelAndView("editerProfil", "profilinfo", request.getSession().getAttribute("Person"));
+
+    }
+    
+    @RequestMapping(value = "/deconnexion", method = RequestMethod.GET)
+    public ModelAndView handleDisconnectionRequest(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
+    	
+  
+    	request.getSession().setAttribute("Person", null); 
+		return new ModelAndView("redirect:connexion");
 
     }
     

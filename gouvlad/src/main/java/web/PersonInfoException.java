@@ -2,12 +2,12 @@ package web;
 
 import bean.Person;
 
-public class SignUpError {
+public class PersonInfoException extends Exception {
 
 	private String messageError;
 	private Person person;
 	
-	public SignUpError(String message, Person p){
+	public PersonInfoException(String message, Person p){
 		this.messageError = message;
 		this.person = p;
 	}

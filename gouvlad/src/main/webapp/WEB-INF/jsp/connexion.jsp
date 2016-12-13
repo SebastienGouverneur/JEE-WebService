@@ -12,4 +12,6 @@ Le couple adresse e-mail / mot de passe est incorrect.<br />
 <tr><td><img src="../images/signup.jpg"></img></td><td><input type="submit" value="Connexion" /></td></tr>
 </table>
 </form>
+	<a href="/gouvlad/annuaire/inscription">Inscription</a>
+
 <jsp:include page="pied_xhtml.jsp" />

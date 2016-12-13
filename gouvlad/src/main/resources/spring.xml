@@ -16,6 +16,8 @@
     <context:component-scan base-package="dao.impl" />
     <context:component-scan base-package="bean" />
     <context:component-scan base-package="bean.impl" />
+    <context:component-scan base-package="checker" />
+    <context:component-scan base-package="checker.impl" />
 
   	<bean name="personFactory" class="bean.Person" scope="prototype"/>
 	<bean name="IPersonFactory" class="bean.impl.PersonFactory">

@@ -8,7 +8,7 @@
 	<c:if test="${not empty signupinfo}">
 	${signupinfo.messageError}	
 	</c:if>
-	<form method="post" action="/gouvlad/annuaire/signup">
+	<form method="post" action="/gouvlad/annuaire/inscription">
 	
 	<table class="tableSignup">
 		<tr>

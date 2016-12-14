@@ -167,7 +167,7 @@ public class AnnuaireController {
 				try {
 					dao.findPerson(p.getEmail());
 					/* the e-mail address is already used */
-					PersonInfoException error = new PersonInfoException("Erreur: Cette adresse e-mail est d√©j√† utilis√©e.", p);
+					PersonInfoException error = new PersonInfoException("Erreur: Cette adresse e-mail est dÈja utilisÈe.", p);
 					return new ModelAndView("inscription", "signupinfo", error);
 					
 				} catch (NotFoundPersonException n){
@@ -179,15 +179,22 @@ public class AnnuaireController {
 				p.setSalt(salt);
 				
 				dao.savePerson(p);
-				request.getSession().setAttribute("Person", p);
+				//request.getSession().setAttribute("Person", p);
 				
-				return new ModelAndView("redirect:person");
+				return new ModelAndView("redirect:inscriptionReussie");
     			
 
     		} 
     		
     		return new ModelAndView("inscription");
     		
+    }
+    
+    @RequestMapping(value = "/inscriptionReussie", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView handleSignupValidateRequest(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException, SQLException, NotFoundPersonException, ParseException {
+    		
+			return new ModelAndView("inscriptionReussie");
     }
     
     /*@RequestMapping(value = "/signup/erreur/{numError}", method = RequestMethod.GET)
@@ -249,28 +256,4 @@ public class AnnuaireController {
 
     }
     
-    /*@RequestMapping(value = "/signup.jpg", method = RequestMethod.GET)
-    public ResponseEntity getImage(String path, HttpServletResponse response) {
-        try {
-            if (StringUtils.isEmpty(path)) {
-                return new ResponseEntity(HttpStatus.NOT_FOUND);
-            } else {
-                response.setHeader("Content-Type", "image/jpg");
-                FileInputStream fin = new FileInputStream(path);
-                ServletOutputStream out = response.getOutputStream();
-
-                IOUtils.copy(fin, out);
-                IOUtils.closeQuietly(fin);
-
-                response.flushBuffer();
-                return new ResponseEntity(HttpStatus.OK);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }*/
-    
-    
-
 }

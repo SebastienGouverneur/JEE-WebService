@@ -17,13 +17,21 @@ table.tableSignup
 
 table.tableListing
 {
-text-align: center;
-border: solid black 1px
+	text-align: center;
+	border: solid black 1px
 }
 
 table.tableListing.tr
 {
-border: solid black 1px
+	border: solid black 1px
 }
 
-p { color: green; }
+p 
+{ 
+	color: green; 
+}
+
+p[class="validateInscription"]
+{
+	color: red;
+}

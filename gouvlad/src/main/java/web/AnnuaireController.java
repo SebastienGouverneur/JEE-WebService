@@ -167,7 +167,7 @@ public class AnnuaireController {
 				try {
 					dao.findPerson(p.getEmail());
 					/* the e-mail address is already used */
-					PersonInfoException error = new PersonInfoException("Erreur: Cette adresse e-mail est d�ja utilis�e.", p);
+					PersonInfoException error = new PersonInfoException("Erreur: Cette adresse e-mail est déjà utilisée.", p);
 					return new ModelAndView("inscription", "signupinfo", error);
 					
 				} catch (NotFoundPersonException n){
@@ -178,9 +178,7 @@ public class AnnuaireController {
 				p.setMotDePasseHash(createPassword);
 				p.setSalt(salt);
 				
-				dao.savePerson(p);
-				//request.getSession().setAttribute("Person", p);
-				
+				dao.savePerson(p);				
 				return new ModelAndView("redirect:inscriptionReussie");
     			
 
@@ -223,13 +221,113 @@ public class AnnuaireController {
 
     }
     
-    @RequestMapping(value = "/editerProfil", method = RequestMethod.GET)
+    @RequestMapping(value = "/editerProfil", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView handleEditingProfileRequest(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
     	
     	if (!Utils.isConnected(request.getSession())){
     		logger.info("Returning connexion view");
     		return new ModelAndView("redirect:connexion");	
+    	}
+    	
+    	if (request.getMethod().equals("POST") && 
+    			request.getParameter("firstname") != null &&
+    			request.getParameter("lastname") != null &&
+    			request.getParameter("email") != null &&
+    			request.getParameter("website") != null &&
+    			request.getParameter("birthdate") != null &&
+    			request.getParameter("newpassword") != null &&
+    			request.getParameter("confirmpassword") != null) {
+
+    		if (request.getParameter("firstname").equals("") ||
+    				request.getParameter("lastname").equals("") ||
+    				request.getParameter("email").equals("")){
+    			PersonInfoException error = new PersonInfoException("Erreur: Les champs nom, prénom et e-mail ne peuvent pas être vides.", null);
+    			ModelAndView m = new ModelAndView("editerProfil", "profilinfo", request.getSession().getAttribute("Person"));
+    			m.addObject("erreur", error);
+    			return m;
+    			
+    		}
+    		
+    		Person tmpPerson = personFactory.getPerson();
+    		tmpPerson.setId(((Person)(request.getSession().getAttribute("Person"))).getId());
+    		tmpPerson.setNom(request.getParameter("lastname"));
+    		tmpPerson.setPrenom(request.getParameter("firstname"));
+
+    		
+    		if (!request.getParameter("email").equals(((Person) (request.getSession().getAttribute("Person"))).getEmail())){
+    			if (!personDataChecker.isValidEmailAddress(request.getParameter("email"))){
+    				PersonInfoException error = new PersonInfoException("Erreur: L'adresse e-mail n'a pas le bon format.", null);
+        			ModelAndView m = new ModelAndView("editerProfil", "profilinfo", request.getSession().getAttribute("Person"));
+    				m.addObject("erreur", error);
+        			return m;
+    			}
+    			
+    			
+        		
+    			try {
+					dao.findPerson(request.getParameter("email"));
+					PersonInfoException error = new PersonInfoException("Erreur: L'adresse e-mail spécifiée est déjà utilisée par une autre personne.", null);
+        			ModelAndView m = new ModelAndView("editerProfil", "profilinfo", request.getSession().getAttribute("Person"));
+    				m.addObject("erreur", error);
+
+        			return m;
+				} catch (SQLException e) {
+					return new ModelAndView("redirect:erreur_interne");
+				} catch (NotFoundPersonException e) {
+					/* Nothing to do */
+				}
+    		}
+    			tmpPerson.setEmail(request.getParameter("email"));
+    		
+    			if (!personDataChecker.isBirthDateValid(request.getParameter("birthdate"))){
+    				PersonInfoException error = new PersonInfoException("Erreur: La date de naissance spécifiée n'est pas valide.", null);
+        			ModelAndView m = new ModelAndView("editerProfil", "profilinfo", request.getSession().getAttribute("Person"));
+    				m.addObject("erreur", error);
+        			return m;
+    			}
+    			
+    			tmpPerson.setDateNaissance(request.getParameter("birthdate"));
+    			
+    			if (!personDataChecker.isValidURL(request.getParameter("website")) && !request.getParameter("website").equals("")){
+    				PersonInfoException error = new PersonInfoException("Erreur: L'adresse URL spécifiée n'est pas valide.", null);
+        			ModelAndView m = new ModelAndView("editerProfil", "profilinfo", request.getSession().getAttribute("Person"));
+    				m.addObject("erreur", error);
+        			return m;
+    			}
+    			
+
+    			tmpPerson.setSiteweb(request.getParameter("website"));
+    			
+    			if (!request.getParameter("newpassword").equals("") || !request.getParameter("confirmpassword").equals("")){
+    				if (!request.getParameter("newpassword").equals(request.getParameter("confirmpassword"))){
+    					PersonInfoException error = new PersonInfoException("Erreur: Les mots de passe donnés sont différents.", null);
+            			ModelAndView m = new ModelAndView("editerProfil", "profilinfo", request.getSession().getAttribute("Person"));
+        				m.addObject("erreur", error);
+            			return m;
+    				}
+    				
+    				String newSalt = Utils.randomSalt(8);
+    				tmpPerson.setSalt(newSalt);
+    				tmpPerson.setMotDePasseHash(Utils.get_SHA_512_SecurePassword(request.getParameter("newpassword"), newSalt));
+    				
+    			}else {
+    				tmpPerson.setMotDePasseHash(((Person) (request.getSession().getAttribute("Person"))).getMotDePasseHash());
+    				tmpPerson.setSalt((((Person) (request.getSession().getAttribute("Person"))).getSalt()));
+
+    			}
+    			
+    			try {
+					dao.savePerson(tmpPerson);
+					request.getSession().setAttribute("Person", tmpPerson);
+        			ModelAndView m = new ModelAndView("editerProfil", "profilinfo", request.getSession().getAttribute("Person"));
+    				m.addObject("success", 1);
+        			return m;
+				} catch (SQLException e) {
+					return new ModelAndView("redirect:erreur_interne");
+				} catch (ParseException e) {
+					return new ModelAndView("redirect:erreur_interne");
+				}
     	}
     	
 		return new ModelAndView("editerProfil", "profilinfo", request.getSession().getAttribute("Person"));

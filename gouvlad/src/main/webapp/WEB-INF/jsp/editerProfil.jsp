@@ -1,22 +1,28 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <c:set var="pageTitle" value="Sign Up" scope="request" />
 <jsp:include page="entete_xhtml.jsp" />
-<form method="post" action="/gouvlad/annuaire/profil">
+<form method="post" action="/gouvlad/annuaire/editerProfil">
 	<p>Edition du profil</p>
 	<br />
 	<jsp:include page="menu.jsp" />
 	
 	<br />
+	<c:if test="${not empty erreur}">
+	${erreur.messageError}
+	</c:if>
+	<c:if test="${not empty success}">
+	Les modifications ont bien été enregistrées.
+	</c:if>
 
 	<table class="tableprofil">
 		<tr>
 			<td>Nom</td>
 			
-			<td><input type="text" name="firstname" value="${profilinfo.nom}" /></td>
+			<td><input type="text" name="lastname" value="${profilinfo.nom}" /></td>
 		</tr>
 		<tr>
 			<td>Prénom</td>
-			<td><input type="text" name="lastname" value="${profilinfo.prenom}"/></td>
+			<td><input type="text" name="firstname" value="${profilinfo.prenom}"/></td>
 		</tr>
 		<tr>
 			<td>Adresse e-mail</td>
@@ -42,7 +48,7 @@
 		</tr>
 		<tr>
 			<td></td>
-			<td><input type="submit" value="Modifier" disabled/></td>
+			<td><input type="submit" value="Modifier" /></td>
 		</tr>
 		
 	</table>

@@ -44,7 +44,7 @@
 		</tr>
 		<tr>
 			<td></td>
-			<td><input type="submit" value="Create account" /></td>
+			<td><input type="submit" value="Créer un compte" /></td>
 		</tr>
 	</table>
 </form>

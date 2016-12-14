@@ -1,10 +1,10 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <c:set var="pageTitle" value="Inscription" scope="request" />
 <jsp:include page="entete_xhtml.jsp" />
-	<p>Vous devez être connecté pour accéder à l'annuaire.</p>
+	<h1>Annuaire</h1>
 	<br />
 	<a href="/gouvlad/annuaire/connexion">Retour à la connexion</a>
-	<br />
+	<h2>Inscription</h2>
 	<c:if test="${not empty signupinfo}">
 	${signupinfo.messageError}	
 	</c:if>
@@ -14,24 +14,24 @@
 		<tr>
 			<td>Nom</td>
 			
-			<td><input type="text" name="firstname" value="${signupinfo.person.nom}" /></td>
+			<td><input type="text" name="firstname" value="<c:out value='${signupinfo.person.nom}' />" /></td>
 		</tr>
 		<tr>
 			<td>Prénom</td>
-			<td><input type="text" name="lastname" value="${signupinfo.person.prenom}"/></td>
+			<td><input type="text" name="lastname" value="<c:out value='${signupinfo.person.prenom}' />" /></td>
 		</tr>
 		<tr>
 			<td>Adresse e-mail</td>
-			<td><input type="text" name="email" value="${signupinfo.person.email}" /></td>
+			<td><input type="text" name="email" value="<c:out value='${signupinfo.person.email}' />" /></td>
 		</tr>
 		<tr>
 			<td>Site web</td>
-			<td><input type="url" name="website" value="${signupinfo.person.siteweb}"/></td>
+			<td><input type="url" name="website" value="<c:out value='${signupinfo.person.siteweb}' />" /></td>
 		</tr>
 		<tr>
 			<td>Date de naissance</td>
 			<td>
-				<input type="text" pattern="\d{1,2}/\d{1,2}/\d{4}" class="datepicker" name="birthdate" value="${signupinfo.person.dateNaissance}" placeholder="exemple : 28/09/1991" />
+				<input type="text" pattern="\d{1,2}/\d{1,2}/\d{4}" class="datepicker" name="birthdate" value="<c:out value='${signupinfo.person.dateNaissance}' />" placeholder="exemple : 28/09/1991" />
 			</td>
 		</tr>
 		<tr>

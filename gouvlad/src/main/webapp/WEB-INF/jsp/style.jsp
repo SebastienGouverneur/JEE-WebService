@@ -70,7 +70,23 @@ a
 	text-decoration: none;
 }
 
+a:hover
+{
+text-decoration: underline;
+}
+
 .bold
 {
 	font-weight: bold;
+}
+
+.tableListing 
+{
+}
+
+.tableListing tr:hover.clickable td
+{
+	background-color: #e8e8e8;
+	cursor: pointer;
+	
 }

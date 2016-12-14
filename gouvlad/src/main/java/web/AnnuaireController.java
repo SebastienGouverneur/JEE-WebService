@@ -23,9 +23,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import bean.Group;
@@ -62,7 +64,7 @@ public class AnnuaireController {
     	try {
 		personList = dao.findAllPersons();
 		} catch (SQLException e) {
-			return new ModelAndView("redirect:erreur_interne");
+			return new ModelAndView("redirect:erreurInterne");
 		}
 		return new ModelAndView("annuairePersonnes", "personList", personList);
 
@@ -80,7 +82,7 @@ public class AnnuaireController {
     	try {
 		groupList = dao.findAllGroups();
 		} catch (SQLException e) {
-			return new ModelAndView("redirect:erreur_interne");
+			return new ModelAndView("redirect:erreurInterne");
 		}
 		return new ModelAndView("annuaireGroupes", "groupList", groupList);
 
@@ -107,7 +109,7 @@ public class AnnuaireController {
 	    			return new ModelAndView("redirect:listePersonnes");
 					
 				} catch (SQLException e) {
-	    			return new ModelAndView("redirect:erreur_interne");
+	    			return new ModelAndView("redirect:erreurInterne");
 				} catch (NotFoundPersonException e) {
 	    			return new ModelAndView("redirect:connexion/erreur");
 
@@ -212,7 +214,7 @@ public class AnnuaireController {
     	try {
 			p = dao.findPerson(id);
 		} catch (SQLException e) {
-			return new ModelAndView("redirect:erreur_interne");
+			return new ModelAndView("redirect:erreurInterne");
 		} catch (NotFoundPersonException e) {
 			p = personFactory.getPerson();
 			p.setId(-1);
@@ -273,7 +275,7 @@ public class AnnuaireController {
 
         			return m;
 				} catch (SQLException e) {
-					return new ModelAndView("redirect:erreur_interne");
+					return new ModelAndView("redirect:erreurInterne");
 				} catch (NotFoundPersonException e) {
 					/* Nothing to do */
 				}
@@ -324,9 +326,9 @@ public class AnnuaireController {
     				m.addObject("success", 1);
         			return m;
 				} catch (SQLException e) {
-					return new ModelAndView("redirect:erreur_interne");
+					return new ModelAndView("redirect:erreurInterne");
 				} catch (ParseException e) {
-					return new ModelAndView("redirect:erreur_interne");
+					return new ModelAndView("redirect:erreurInterne");
 				}
     	}
     	
@@ -352,6 +354,20 @@ public class AnnuaireController {
     	response.flushBuffer();
 		return new ModelAndView("style");
 
+    }
+    
+    @RequestMapping(value = "/pageIntrouvable", method = RequestMethod.GET)
+    public ModelAndView handlePageNotFound(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
+    	return new ModelAndView("pageIntrouvable");
+    
+    }
+    
+    @RequestMapping(value = "/erreurInterne", method = RequestMethod.GET)
+    public ModelAndView handleInternalError(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
+    	return new ModelAndView("erreurInterne");
+    
     }
     
 }

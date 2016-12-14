@@ -2,8 +2,9 @@
 <jsp:include page="entete_xhtml.jsp">
         <jsp:param name="title" value="Afficher une personne"/>
 </jsp:include>
-Annuaire - Détail d'identité<br />
+<h1>Annuaire</h1>
 <jsp:include page="menu.jsp" />
+<h2>Détail d'identité</h2>
 <c:choose>
 <c:when test="${person.id < 0}">
 Erreur: personne introuvable.

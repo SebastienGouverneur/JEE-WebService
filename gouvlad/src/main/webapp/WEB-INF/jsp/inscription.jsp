@@ -1,5 +1,5 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<c:set var="pageTitle" value="Sign Up" scope="request" />
+<c:set var="pageTitle" value="Inscription" scope="request" />
 <jsp:include page="entete_xhtml.jsp" />
 	<p>Vous devez être connecté pour accéder à l'annuaire.</p>
 	<br />

@@ -1,8 +1,8 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<c:set var="pageTitle" value="Sign Up" scope="request" />
+<c:set var="pageTitle" value="Edition du profil" scope="request" />
 <jsp:include page="entete_xhtml.jsp" />
 <form method="post" action="/gouvlad/annuaire/editerProfil">
-	<h1>Annuaire</h1></p>
+	<h1>Annuaire</h1>
 	<jsp:include page="menu.jsp" />
 	<h2>Edition du profil</h2>
 	<c:if test="${not empty erreur}">

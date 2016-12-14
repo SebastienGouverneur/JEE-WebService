@@ -2,10 +2,10 @@
 <jsp:include page="entete_xhtml.jsp">
         <jsp:param name="title" value="Annuaire"/>
 </jsp:include>
-Annuaire - Liste des groupes<br />
+<h1>Annuaire</h1>  
 <jsp:include page="menu.jsp" />
+<h2>Liste des groupes</h2>
 <table class="tableListing">
-<tr><td>Nom du groupe</td></tr>
 <c:forEach var="group" items="${groupList}">
 <tr><td>${group.nomGroupe}</td></tr>
 </c:forEach>

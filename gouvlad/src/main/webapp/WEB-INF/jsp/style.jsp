@@ -70,7 +70,7 @@ a
 	text-decoration: none;
 }
 
-#bold
+.bold
 {
-	text-decoration: bold;
+	font-weight: bold;
 }

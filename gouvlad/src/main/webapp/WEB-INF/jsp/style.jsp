@@ -1,37 +1,76 @@
 body
 {
-	color:black;
-	text-align:center;
-}
-table.noBorder
-{
-	margin-left:auto; 
-    margin-right:auto;
-}
-
-table.tableSignup
-{
-	margin-left:auto; 
-    margin-right:auto;
-}
-
-table.tableListing
-{
+	color: black;
+	background-color: #e1ebf9;
 	text-align: center;
-	border: solid black 1px
 }
 
-table.tableListing.tr
+h1
 {
-	border: solid black 1px
+
 }
 
-p 
-{ 
-	color: green; 
+table 
+{
+
+	border-collapse: collapse;
 }
+
+table, tr, td
+{
+	border: 1px solid black;
+	left: 50%;
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+td
+{
+	width: 200px;
+	height: 100%;
+	text-align: left;
+	padding: 3px;
+	background-color: #f6f6f6;
+}
+
 
 p[class="validateInscription"]
 {
+color: red;
+}
+
+#menu
+{
+	background-color: #314b72;
+    padding: 5px;
+	 margin-bottom: 30px;
+	 width: 50%;
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 10px;
+        box-shadow: 2px 2px 0px #aaa;
+}
+#menu a
+{
+	color: white;
+        text-decoration: none;
+	transition: color .2s ease-in;
+}
+
+#menu a:hover
+{
 	color: red;
+	transition: color .1s ease-in;
+}
+
+a
+{
+	text-decoration: none;
+}
+
+#bold
+{
+	text-decoration: bold;
 }

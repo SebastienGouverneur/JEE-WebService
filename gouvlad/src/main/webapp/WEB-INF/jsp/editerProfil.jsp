@@ -2,11 +2,9 @@
 <c:set var="pageTitle" value="Sign Up" scope="request" />
 <jsp:include page="entete_xhtml.jsp" />
 <form method="post" action="/gouvlad/annuaire/editerProfil">
-	<p>Edition du profil</p>
-	<br />
+	<h1>Annuaire</h1></p>
 	<jsp:include page="menu.jsp" />
-	
-	<br />
+	<h2>Edition du profil</h2>
 	<c:if test="${not empty erreur}">
 	${erreur.messageError}
 	</c:if>

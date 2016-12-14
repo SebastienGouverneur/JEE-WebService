@@ -1,33 +1,21 @@
 package web;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import bean.Group;
@@ -35,7 +23,10 @@ import bean.IPersonFactory;
 import bean.Person;
 import checker.IPersonDataChecker;
 import dao.IPersonDao;
+import dao.impl.InvalidURLException;
 import dao.impl.NotFoundPersonException;
+import web.PersonInfoException;
+import web.Utils;
 
 @Controller
 @RequestMapping("/annuaire")
@@ -99,6 +90,12 @@ public class AnnuaireController {
     		if (request.getMethod().equals("POST") && 
     			request.getParameter("email") != null &&
     			request.getParameter("password") != null){
+    			
+    			if (request.getParameter("email").equals("") ||
+        				request.getParameter("password").equals("")){
+        			return new ModelAndView ("connexion", "error", 1);
+        		}
+    			
     			try {
 					Person p = dao.findPerson(request.getParameter("email"));
 					String hashedPassword = Utils.get_SHA_512_SecurePassword(request.getParameter("password"), p.getSalt());
@@ -131,7 +128,7 @@ public class AnnuaireController {
     
     @RequestMapping(value = "/inscription", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView handleSignupRequest(HttpServletRequest request,
-            HttpServletResponse response) throws ServletException, IOException, SQLException, NotFoundPersonException, ParseException {
+            HttpServletResponse response) throws ServletException, IOException, SQLException, NotFoundPersonException, ParseException, InvalidURLException {
     		
     		String salt = Utils.randomSalt(8);
     	
@@ -169,11 +166,16 @@ public class AnnuaireController {
 				try {
 					dao.findPerson(p.getEmail());
 					/* the e-mail address is already used */
-					PersonInfoException error = new PersonInfoException("Erreur: Cette adresse e-mail est dÃ©jÃ  utilisÃ©e.", p);
+					PersonInfoException error = new PersonInfoException("Erreur: Cette adresse e-mail est déjà utilisée.", p);
 					return new ModelAndView("inscription", "signupinfo", error);
 					
 				} catch (NotFoundPersonException n){
 					/* Nothing to do */
+				}
+				
+				if (!personDataChecker.isValidURL(request.getParameter("website")) && !request.getParameter("website").equals("")){
+					PersonInfoException error1 = new PersonInfoException("Erreur: L'adresse URL spécifiée n'est pas valide.", null);
+					return new ModelAndView("inscription", "signupinfo", error1);
 				}
 				
 				String createPassword = Utils.get_SHA_512_SecurePassword(request.getParameter("createpassword"), salt);

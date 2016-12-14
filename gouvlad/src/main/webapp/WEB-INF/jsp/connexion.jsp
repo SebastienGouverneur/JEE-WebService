@@ -8,6 +8,9 @@
 <c:if test="${not empty erreur}" >
 Le couple adresse e-mail / mot de passe est incorrect.<br />
 </c:if>
+<c:if test="${not empty error}" >
+Erreur: Les champs Adresse e-mail et Mot de passe ne peuvent pas être vides.<br />
+</c:if>
 <table class="noBorder">
 <tr><td>Adresse e-mail</td><td><input type="text" name="email"  /></td></tr><br />
 <tr><td>Mot de passe</td><td><input type="password" name="password"  /></td></tr><br />

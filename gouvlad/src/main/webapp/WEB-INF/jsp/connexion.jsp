@@ -14,9 +14,9 @@ Erreur: Les champs Adresse e-mail et Mot de passe ne peuvent pas être vides.<br 
 <table class="noBorder">
 <tr><td>Adresse e-mail</td><td><input type="text" name="email"  /></td></tr><br />
 <tr><td>Mot de passe</td><td><input type="password" name="password"  /></td></tr><br />
-<tr><td></td><td><input type="submit" value="Connexion" /></td></tr>
-</table>
-</form>
+</table> <br/>
+<input type="submit" value="Connexion" />
+</form><br />
 	<a href="/gouvlad/annuaire/inscription">Inscription</a>
 
 <jsp:include page="pied_xhtml.jsp" />

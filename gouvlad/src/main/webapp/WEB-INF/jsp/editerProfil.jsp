@@ -15,26 +15,30 @@
 	<table class="tableprofil">
 		<tr>
 			<td>Nom</td>
-			
-			<td><input type="text" name="lastname" value="<c:out value='${profilinfo.nom}' />" /></td>
+			<td><input type="text" name="lastname"
+				value="<c:out value='${profilinfo.nom}' />" /></td>
 		</tr>
 		<tr>
 			<td>Prénom</td>
-			<td><input type="text" name="firstname" value="<c:out value='${profilinfo.prenom}' />"/></td>
+			<td><input type="text" name="firstname"
+				value="<c:out value='${profilinfo.prenom}' />" /></td>
 		</tr>
 		<tr>
 			<td>Adresse e-mail</td>
-			<td><input type="text" name="email" value="<c:out value='${profilinfo.email}' />" /></td>
+			<td><input type="text" name="email"
+				value="<c:out value='${profilinfo.email}' />" /></td>
 		</tr>
 		<tr>
 			<td>Site web</td>
-			<td><input type="url" name="website" value="<c:out value='${profilinfo.siteweb}' />"/></td>
+			<td><input type="url" name="website"
+				value="<c:out value='${profilinfo.siteweb}' />" /></td>
 		</tr>
 		<tr>
 			<td>Date de naissance</td>
-			<td>
-				<input type="text" pattern="\d{1,2}/\d{1,2}/\d{4}" class="datepicker" name="birthdate" value="<c:out value='${profilinfo.dateNaissance}' />" placeholder="exemple : 28/09/1991" />
-			</td>
+			<td><input type="text" pattern="\d{1,2}/\d{1,2}/\d{4}"
+				class="datepicker" name="birthdate"
+				value="<c:out value='${profilinfo.dateNaissance}' />"
+				placeholder="exemple : 28/09/1991" /></td>
 		</tr>
 		<tr>
 			<td>Changer de mot de passe*</td>
@@ -44,12 +48,9 @@
 			<td>Confirmer le nouveau mot de passe*</td>
 			<td><input type="password" name="confirmpassword" /></td>
 		</tr>
-		<tr>
-			<td></td>
-			<td><input type="submit" value="Modifier" /></td>
-		</tr>
-		
 	</table>
+	<br /> <input type="submit" value="Modifier" />
 </form>
+</br>
 * Laisser ces champs vides pour ne pas les modifier.
 <jsp:include page="pied_xhtml.jsp" />

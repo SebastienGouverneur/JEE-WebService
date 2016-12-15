@@ -372,6 +372,13 @@ public class AnnuaireController {
     
     }
     
+    @RequestMapping(value = "/pagePrincipale", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView handlePrincipalPageRequest(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException, SQLException, NotFoundPersonException, ParseException {
+    		
+			return new ModelAndView("pagePrincipale");
+    }
+    
     @RequestMapping(value = "/erreurInterne", method = RequestMethod.GET)
     public ModelAndView handleInternalError(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {

@@ -44,18 +44,18 @@ color: red;
 {
 	background-color: #314b72;
     padding: 5px;
-	 margin-bottom: 30px;
-	 width: 50%;
-        text-align: center;
-        margin-left: auto;
-        margin-right: auto;
-        border-radius: 10px;
-        box-shadow: 2px 2px 0px #aaa;
+	margin-bottom: 30px;
+	width: 50%;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 10px;
+    box-shadow: 2px 2px 0px #aaa;
 }
 #menu a
 {
 	color: white;
-        text-decoration: none;
+    text-decoration: none;
 	transition: color .2s ease-in;
 }
 
@@ -89,4 +89,37 @@ text-decoration: underline;
 	background-color: #e8e8e8;
 	cursor: pointer;
 	
+}
+
+#seachText
+{
+	text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#searchbar
+{
+	position: relative;
+	margin-left: auto;
+    margin-right: auto;
+    vertical-align: middle;
+	width: 1040px; 
+	height: auto;
+}
+
+.champ       
+{
+	width:150px; 
+	height: 15px;
+	vertical-align: middle;
+}
+
+.bouton       
+{ 
+	background: url('../images/searchbar_button.png') no-repeat;
+    background-size: 100% 100%;
+    vertical-align: middle;
+	width: 16px;
+	height: 16px;
 }

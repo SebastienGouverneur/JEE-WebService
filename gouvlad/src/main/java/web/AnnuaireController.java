@@ -84,7 +84,7 @@ public class AnnuaireController {
             HttpServletResponse response) throws ServletException, IOException {
 
     		if (Utils.isConnected(request.getSession())){
-    			return new ModelAndView("redirect:listePersonnes");
+    			return new ModelAndView("redirect:connexionReussie");
     		}
     		
     		if (request.getMethod().equals("POST") && 
@@ -103,7 +103,7 @@ public class AnnuaireController {
 		    			return new ModelAndView("redirect:connexion/erreur");
 					}
 					request.getSession().setAttribute("Person", p);
-	    			return new ModelAndView("redirect:listePersonnes");
+	    			return new ModelAndView("redirect:connexionReussie");
 					
 				} catch (SQLException e) {
 	    			return new ModelAndView("redirect:erreurInterne");
@@ -117,6 +117,13 @@ public class AnnuaireController {
     		
     		return new ModelAndView("connexion");
     		
+    }
+    
+    @RequestMapping(value = "/connexionReussie", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView handleConnexionValidateRequest(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException, SQLException, NotFoundPersonException, ParseException {
+    		
+			return new ModelAndView("connexionReussie");
     }
     
     @RequestMapping(value = "/connexion/erreur", method = RequestMethod.GET)

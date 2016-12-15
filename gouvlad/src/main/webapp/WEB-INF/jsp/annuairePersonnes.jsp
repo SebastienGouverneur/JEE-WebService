@@ -1,7 +1,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <c:set var="pageTitle" value="Liste des personnes" scope="request" />
 <jsp:include page="entete_xhtml.jsp" />
-<h1>Annuaire</h1><br />
+<h1>Annuaire</h1>
 <jsp:include page="menu.jsp" />
 <h2>Liste des personnes inscrites</h2>
 <table class="tableListing">

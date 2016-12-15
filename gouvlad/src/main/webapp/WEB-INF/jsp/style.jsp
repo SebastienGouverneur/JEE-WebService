@@ -91,35 +91,21 @@ text-decoration: underline;
 	
 }
 
-#seachText
+#searchText
 {
-	text-align: center;
-    margin-left: auto;
-    margin-right: auto;
+    width: 200px;
+    height: 20px;
+    padding-right: 50px;
 }
 
-#searchbar
+#searchButton
 {
-	position: relative;
-	margin-left: auto;
-    margin-right: auto;
-    vertical-align: middle;
-	width: 1040px; 
-	height: auto;
+    margin-left: -50px;
+    height: 25px;
+    width: 50px;
+    background: blue;
+    color: white;
+    border: 0;
+    -webkit-appearance: none;
 }
 
-.champ       
-{
-	width:150px; 
-	height: 15px;
-	vertical-align: middle;
-}
-
-.bouton       
-{ 
-	background: url('../images/searchbar_button.png') no-repeat;
-    background-size: 100% 100%;
-    vertical-align: middle;
-	width: 16px;
-	height: 16px;
-}

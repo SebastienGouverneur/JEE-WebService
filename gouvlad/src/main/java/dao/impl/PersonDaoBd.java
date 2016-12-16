@@ -578,5 +578,56 @@ public class PersonDaoBd implements IPersonDao {
 		return connection;
 	}
 
+	public List<Person> searchPersons(String searchText) throws SQLException {
+		return searchPersons(searchText, Resources.getString("KeyPerson"), Resources.getString("KeyBelong"), Resources.getString("KeyGroup"));
+	}
+
+	public List<Person> searchPersons(String searchText, boolean test) throws SQLException {
+		return searchPersons(searchText, Resources.getString("KeyPersonTest"), Resources.getString("KeyBelongTest"), Resources.getString("KeyGroupTest"));
+	}
+	
+	public List<Person> searchPersons(String searchText,
+							String tableNamePerson,
+							String tableNameBelong,
+							String tableNameGroup) throws SQLException{
+		List<Person> personList = new LinkedList<Person>();
+		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		PreparedStatement st = connection.prepareStatement("SELECT * FROM "+tableNamePerson+" " +
+				"AS person LEFT OUTER JOIN "+ tableNameBelong+" AS belong ON " +
+						"person.`id-personne` = belong.`id-personne` " +
+						"LEFT OUTER JOIN "+tableNameGroup+" AS groupe ON belong.`id-groupe`=groupe.`id-groupe` " +
+								"WHERE person.`nom` LIKE ? OR person.`prenom` LIKE ? OR person.`email` LIKE ? OR person.`url-web` LIKE ? "
+								+ "OR groupe.`nom-groupe` LIKE ? ORDER BY person.`id-personne`");
+		st.setString(1, '%'+searchText+'%');
+		st.setString(2, '%'+searchText+'%');
+		st.setString(3, '%'+searchText+'%');
+		st.setString(4, '%'+searchText+'%');
+		st.setString(5, '%'+searchText+'%');
+
+		ResultSet rs = st.executeQuery();
+		while (rs.next()){
+			Person p = personFactory.getPerson();
+			p.setId(rs.getInt("person.id-personne"));
+			p.setNom(rs.getString("person.nom"));
+			p.setPrenom(rs.getString("person.prenom"));
+			p.setEmail(rs.getString("person.email"));
+			p.setSiteweb(rs.getString("person.url-web"));
+			p.setDateNaissance(df.format(rs.getDate("person.date-naissance")));
+			p.setMotDePasseHash(rs.getString("person.mot-de-passe-hash"));
+			p.setSalt(rs.getString("person.salt"));
+			if (rs.getObject("groupe.id-groupe") != null){
+				Group g = groupFactory.getGroup();
+				g.setId(rs.getInt("groupe.id-groupe"));
+				g.setNomGroupe(rs.getString("groupe.nom-groupe"));
+				p.addToGroup(g);
+			personList.add(p);
+		}
+		
+		
+		}
+		return personList;
+
+	}
+
 	
 }

@@ -559,6 +559,53 @@ public class PersonDaoBdTest {
 		
 	}
 	
+	
+	@Test(timeout = 10000)
+	public void testSearchPerson2PersonsWithOneGroup() throws SQLException, ParseException{
+		Group g1 = groupFactory.getGroup();
+		g1.setId(1);
+		g1.setNomGroupe("FSI");
+		
+		
+		Person p1 = getMockPersonSebastien(1, g1);
+		Person p2 = getMockPersonGabriel(2, g1);
+
+		insertPerson(p1);
+		insertPerson(p2);
+		insertGroup(g1);
+
+		List<Person> listPerson;
+		listPerson = dao.searchPersons("ThisWillReturnNothing", true);
+		assertEquals(listPerson.size(), 0);
+		
+		listPerson = dao.searchPersons("Ladet", true);
+		assertEquals(listPerson.size(), 1);
+		
+		assertEquals(listPerson.get(0).getId(), 2);
+		assertEquals(listPerson.get(0).getNom(), "Ladet"); 
+		assertEquals(listPerson.get(0).getPrenom(), "Gabriel");
+		assertEquals(listPerson.get(0).getGroupe().getId(), 1);
+		assertEquals(listPerson.get(0).getGroupe().getNomGroupe(), "FSI");
+		
+		listPerson = dao.searchPersons("FSI", true);
+		assertEquals(listPerson.size(), 2);
+		
+		
+		assertEquals(listPerson.get(0).getId(), 1);
+		assertEquals(listPerson.get(0).getNom(), "Gouverneur"); 
+		assertEquals(listPerson.get(0).getPrenom(), "Sébastien");
+		assertEquals(listPerson.get(0).getGroupe().getId(), 1);
+		assertEquals(listPerson.get(0).getGroupe().getNomGroupe(), "FSI");
+		
+		assertEquals(listPerson.get(1).getId(), 2);
+		assertEquals(listPerson.get(1).getNom(), "Ladet"); 
+		assertEquals(listPerson.get(1).getPrenom(), "Gabriel");
+		assertEquals(listPerson.get(1).getGroupe().getId(), 1);
+		assertEquals(listPerson.get(1).getGroupe().getNomGroupe(), "FSI");
+		
+		/*listPerson = dao.searchPersons("Ladet");
+		assertEquals(listPerson.size(), 1);*/
+	}
 
 
 }

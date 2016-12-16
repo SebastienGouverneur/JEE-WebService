@@ -351,16 +351,26 @@ public class AnnuaireController {
     	
     	if (!Utils.isConnected(request.getSession())){
     		logger.info("Returning connexion view");
-    		return new ModelAndView("redirect:connexion");	
+    		return new ModelAndView("redirect:/annuaire/connexion");	
     	}
     	
-    	return null;
+    	List<Person> personsList;
+    	
+    	try {
+			personsList = dao.searchPersons(searchText);
+		} catch (SQLException e) {
+			return new ModelAndView("redirect:/annuaire/erreurInterne");
+		}
+    	
+    	ModelAndView m = new ModelAndView("resultatRecherche");
+    	System.out.println("size: "+personsList.size());
+    	m.addObject("personList", personsList);
+    	m.addObject("personListSize", personsList.size());
+    	m.addObject("searchText", searchText);
+    	return m;
     }
-    	
-    
-    	
+
    
-    
     
     @RequestMapping(value = "/rechercherPersonne", method = RequestMethod.POST)
     public ModelAndView handleSearchRequest(HttpServletRequest request,
@@ -369,7 +379,6 @@ public class AnnuaireController {
     	 if (request.getParameter("searchText") == null || request.getParameter("searchText").equals("")){
     			return new ModelAndView("redirect:/annuaire/pagePrincipale");
     	    }
-    	    System.out.println("recherche: "+request.getParameter("searchText"));
     			return new ModelAndView("redirect:"+request.getParameter("searchText"));
 
     	    }

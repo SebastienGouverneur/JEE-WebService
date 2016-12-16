@@ -123,6 +123,11 @@ public class AnnuaireController {
     public ModelAndView handleConnexionValidateRequest(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException, SQLException, NotFoundPersonException, ParseException {
     		
+    	if (!Utils.isConnected(request.getSession())){
+    		logger.info("Returning connexion view");
+    		return new ModelAndView("redirect:connexion");	
+    	}
+    	
 			return new ModelAndView("connexionReussie");
     }
     
@@ -173,7 +178,7 @@ public class AnnuaireController {
 				try {
 					dao.findPerson(p.getEmail());
 					/* the e-mail address is already used */
-					PersonInfoException error = new PersonInfoException("Erreur: Cette adresse e-mail est déjà utilisée.", p);
+					PersonInfoException error = new PersonInfoException("Erreur: Cette adresse e-mail est dï¿½jï¿½ utilisï¿½e.", p);
 					return new ModelAndView("inscription", "signupinfo", error);
 					
 				} catch (NotFoundPersonException n){
@@ -181,7 +186,7 @@ public class AnnuaireController {
 				}
 				
 				if (!personDataChecker.isValidURL(request.getParameter("website")) && !request.getParameter("website").equals("")){
-					PersonInfoException error1 = new PersonInfoException("Erreur: L'adresse URL spécifiée n'est pas valide.", null);
+					PersonInfoException error1 = new PersonInfoException("Erreur: L'adresse URL spï¿½cifiï¿½e n'est pas valide.", null);
 					return new ModelAndView("inscription", "signupinfo", error1);
 				}
 				
@@ -206,11 +211,6 @@ public class AnnuaireController {
 			return new ModelAndView("inscriptionReussie");
     }
     
-    /*@RequestMapping(value = "/signup/erreur/{numError}", method = RequestMethod.GET)
-    public ModelAndView handleSignupRequestWithError(@PathVariable("numError") Integer numError) throws ServletException, IOException {
-		return new ModelAndView("inscription", "erreur", numError);
-
-    }*/
     
     @RequestMapping(value = "/afficherPersonne/{id}", method = RequestMethod.GET)
     public ModelAndView handleDisplayPersonInfosRequest(@PathVariable("id") Integer id, HttpServletRequest request,
@@ -345,6 +345,36 @@ public class AnnuaireController {
 
     }
     
+    @RequestMapping(value = "/rechercherPersonne/{searchText}", method = RequestMethod.GET)
+    public ModelAndView handleSearchRequestParameter(@PathVariable("searchText") String searchText, HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
+    	
+    	if (!Utils.isConnected(request.getSession())){
+    		logger.info("Returning connexion view");
+    		return new ModelAndView("redirect:connexion");	
+    	}
+    	
+    	return null;
+    }
+    	
+    
+    	
+   
+    
+    
+    @RequestMapping(value = "/rechercherPersonne", method = RequestMethod.POST)
+    public ModelAndView handleSearchRequest(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
+    	
+    	 if (request.getParameter("searchText") == null || request.getParameter("searchText").equals("")){
+    			return new ModelAndView("redirect:/annuaire/pagePrincipale");
+    	    }
+    	    System.out.println("recherche: "+request.getParameter("searchText"));
+    			return new ModelAndView("redirect:"+request.getParameter("searchText"));
+
+    	    }
+    
+    
     @RequestMapping(value = "/deconnexion", method = RequestMethod.GET)
     public ModelAndView handleDisconnectionRequest(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
@@ -368,6 +398,12 @@ public class AnnuaireController {
     @RequestMapping(value = "/pageIntrouvable", method = RequestMethod.GET)
     public ModelAndView handlePageNotFound(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
+    	
+    	if (!Utils.isConnected(request.getSession())){
+    		logger.info("Returning connexion view");
+    		return new ModelAndView("redirect:connexion");	
+    	}
+    	
     	return new ModelAndView("pageIntrouvable");
     
     }
@@ -375,7 +411,12 @@ public class AnnuaireController {
     @RequestMapping(value = "/pagePrincipale", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView handlePrincipalPageRequest(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException, SQLException, NotFoundPersonException, ParseException {
-    		
+    	
+    	if (!Utils.isConnected(request.getSession())){
+    		logger.info("Returning connexion view");
+    		return new ModelAndView("redirect:connexion");	
+    	}	
+    	
 			return new ModelAndView("pagePrincipale");
     }
     

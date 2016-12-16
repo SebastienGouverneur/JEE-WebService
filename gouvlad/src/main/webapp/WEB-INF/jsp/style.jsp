@@ -91,6 +91,12 @@ text-decoration: underline;
 	
 }
 
+#searchBox
+{
+	margin-top: 10px;
+
+}
+
 #searchText
 {
     width: 200px;

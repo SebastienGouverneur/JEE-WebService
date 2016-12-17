@@ -15,6 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -30,11 +31,11 @@ import dao.impl.NotFoundPersonException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/spring.xml")
+@Component
 public class PersonDaoBdTest {
 	
 	@Autowired
 	IPersonDao dao;
-	
 	
 	@Autowired
 	IPersonFactory personFactory;
@@ -49,7 +50,7 @@ public class PersonDaoBdTest {
 		clearTable(Resources.getString("KeyGroupTest"));
 	}
 	
-	private Person getMockPersonGabriel(int id, Group group){
+	public Person getMockPersonGabriel(int id, Group group){
 		Person p = personFactory.getPerson();
 		p.setId(id);
 		p.setNom("Ladet"); 
@@ -64,7 +65,7 @@ public class PersonDaoBdTest {
 
 	}
 	
-	private Person getMockPersonSebastien(int id, Group group){
+	public Person getMockPersonSebastien(int id, Group group){
 		Person p = personFactory.getPerson();
 		p.setId(id);
 		p.setNom("Gouverneur"); 
@@ -78,7 +79,7 @@ public class PersonDaoBdTest {
 		return p;
 	}
 	
-	private Person getMockPersonJames(int id, Group group){
+	public Person getMockPersonJames(int id, Group group){
 		Person p = personFactory.getPerson();
 		p.setId(id);
 		p.setNom("Bond"); 
@@ -92,7 +93,7 @@ public class PersonDaoBdTest {
 		return p;
 	}
 	
-	private void insertPerson(Person person) throws SQLException, ParseException{
+	public void insertPerson(Person person) throws SQLException, ParseException{
 		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy"); 
 		PreparedStatement st = dao.getConnection().prepareStatement("INSERT INTO "+Resources.getString("KeyPersonTest")+" VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
 		st.setInt(1, person.getId());

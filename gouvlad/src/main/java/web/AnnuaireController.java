@@ -55,7 +55,10 @@ public class AnnuaireController {
     	}
     	List<Person> personList;
     	try {
-		personList = dao.findAllPersons();
+    		if (request.getSession().getAttribute("testContext") != null)
+    			personList = dao.findAllPersons(true);
+    		else
+    			personList = dao.findAllPersons();
 		} catch (SQLException e) {
 			return new ModelAndView("redirect:erreurInterne");
 		}
@@ -73,7 +76,10 @@ public class AnnuaireController {
     	}
     	List<Group> groupList;
     	try {
-		groupList = dao.findAllGroups();
+    		if (request.getSession().getAttribute("testContext") != null)
+    			groupList = dao.findAllGroups(true);
+    		else
+    			groupList = dao.findAllGroups();
 		} catch (SQLException e) {
 			return new ModelAndView("redirect:erreurInterne");
 		}
@@ -99,7 +105,12 @@ public class AnnuaireController {
         		}
     			
     			try {
-					Person p = dao.findPerson(request.getParameter("email"));
+    				Person p;
+    				if (request.getSession().getAttribute("testContext") != null)
+    					p = dao.findPerson(request.getParameter("email"), true);
+    				else
+    					p = dao.findPerson(request.getParameter("email"));
+
 					String hashedPassword = Utils.get_SHA_512_SecurePassword(request.getParameter("password"), p.getSalt());
 					if (!hashedPassword.equals(p.getMotDePasseHash())){
 		    			return new ModelAndView("redirect:connexion/erreur");
@@ -122,8 +133,8 @@ public class AnnuaireController {
     }
     
     @RequestMapping(value = "/connexionReussie", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView handleConnexionValidateRequest(HttpServletRequest request,
-            HttpServletResponse response) throws ServletException, IOException, SQLException, NotFoundPersonException, ParseException {
+    public ModelAndView handleConnectionValidateRequest(HttpServletRequest request,
+            HttpServletResponse response) {
     		
     	if (!Utils.isConnected(request.getSession())){
     		logger.info("Returning connexion view");
@@ -178,9 +189,13 @@ public class AnnuaireController {
 				};
 				
 				try {
-					dao.findPerson(p.getEmail());
+					if (request.getSession().getAttribute("testContext") != null)
+						dao.findPerson(p.getEmail(), true);
+					else
+						dao.findPerson(p.getEmail());
+					
 					/* the e-mail address is already used */
-					PersonInfoException error = new PersonInfoException("Erreur: Cette adresse e-mail est d�j� utilis�e.", p);
+					PersonInfoException error = new PersonInfoException("Erreur: Cette adresse e-mail est déjà utilisée.", p);
 					return new ModelAndView("inscription", "signupinfo", error);
 					
 				} catch (NotFoundPersonException n){
@@ -188,15 +203,19 @@ public class AnnuaireController {
 				}
 				
 				if (!personDataChecker.isValidURL(request.getParameter("website")) && !request.getParameter("website").equals("")){
-					PersonInfoException error1 = new PersonInfoException("Erreur: L'adresse URL sp�cifi�e n'est pas valide.", null);
-					return new ModelAndView("inscription", "signupinfo", error1);
+					PersonInfoException error = new PersonInfoException("Erreur: L'adresse URL spécifiée n'est pas valide.", null);
+					return new ModelAndView("inscription", "signupinfo", error);
 				}
 				
 				String createPassword = Utils.get_SHA_512_SecurePassword(request.getParameter("createpassword"), salt);
 				p.setMotDePasseHash(createPassword);
 				p.setSalt(salt);
 				
-				dao.savePerson(p);				
+				if (request.getSession().getAttribute("testContext") != null)
+					dao.savePerson(p, true);
+				else
+					dao.savePerson(p);
+				
 				return new ModelAndView("redirect:inscriptionReussie");
     			
 
@@ -208,7 +227,7 @@ public class AnnuaireController {
     
     @RequestMapping(value = "/inscriptionReussie", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView handleSignupValidateRequest(HttpServletRequest request,
-            HttpServletResponse response) throws ServletException, IOException, SQLException, NotFoundPersonException, ParseException {
+            HttpServletResponse response)  {
     		
 			return new ModelAndView("inscriptionReussie");
     }
@@ -223,7 +242,10 @@ public class AnnuaireController {
     	}
     	Person p;
     	try {
-			p = dao.findPerson(id);
+    		if (request.getSession().getAttribute("testContext") != null)
+    			p = dao.findPerson(id, true);
+    		else
+    			p = dao.findPerson(id);
 		} catch (SQLException e) {
 			return new ModelAndView("redirect:erreurInterne");
 		} catch (NotFoundPersonException e) {
@@ -279,7 +301,10 @@ public class AnnuaireController {
     			
         		
     			try {
-					dao.findPerson(request.getParameter("email"));
+    				if (request.getSession().getAttribute("testContext") != null)
+    					dao.findPerson(request.getParameter("email"), true);
+    				else
+    					dao.findPerson(request.getParameter("email"));
 					PersonInfoException error = new PersonInfoException("Erreur: L'adresse e-mail spécifiée est déjà utilisée par une autre personne.", null);
         			ModelAndView m = new ModelAndView("editerProfil", "profilinfo", request.getSession().getAttribute("Person"));
     				m.addObject("erreur", error);
@@ -331,7 +356,10 @@ public class AnnuaireController {
     			}
     			
     			try {
-					dao.savePerson(tmpPerson);
+    				if (request.getSession().getAttribute("testContext") != null)
+    					dao.savePerson(tmpPerson, true);
+    				else
+    					dao.savePerson(tmpPerson);
 					request.getSession().setAttribute("Person", tmpPerson);
         			ModelAndView m = new ModelAndView("editerProfil", "profilinfo", request.getSession().getAttribute("Person"));
     				m.addObject("success", 1);
@@ -359,7 +387,11 @@ public class AnnuaireController {
     	List<Person> personsList;
     	
     	try {
-			personsList = dao.searchPersons(searchText);
+    		if (request.getSession().getAttribute("testContext") != null)
+    			personsList = dao.searchPersons(searchText, true);
+    		else
+    			personsList = dao.searchPersons(searchText);
+
 		} catch (SQLException e) {
 			return new ModelAndView("redirect:/annuaire/erreurInterne");
 		}
@@ -391,7 +423,7 @@ public class AnnuaireController {
             HttpServletResponse response) throws ServletException, IOException {
     	
   
-    	request.getSession().setAttribute("Person", null); 
+    	request.getSession().removeAttribute("Person");
 		return new ModelAndView("redirect:connexion");
 
     }
@@ -410,18 +442,13 @@ public class AnnuaireController {
     public ModelAndView handlePageNotFound(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
     	
-    	if (!Utils.isConnected(request.getSession())){
-    		logger.info("Returning connexion view");
-    		return new ModelAndView("redirect:connexion");	
-    	}
-    	
     	return new ModelAndView("pageIntrouvable");
     
     }
     
     @RequestMapping(value = "/pagePrincipale", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView handlePrincipalPageRequest(HttpServletRequest request,
-            HttpServletResponse response) throws ServletException, IOException, SQLException, NotFoundPersonException, ParseException {
+            HttpServletResponse response){
     	
     	if (!Utils.isConnected(request.getSession())){
     		logger.info("Returning connexion view");

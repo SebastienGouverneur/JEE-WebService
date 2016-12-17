@@ -1,6 +1,8 @@
 package web;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
@@ -363,10 +365,9 @@ public class AnnuaireController {
 		}
     	
     	ModelAndView m = new ModelAndView("resultatRecherche");
-    	System.out.println("size: "+personsList.size());
     	m.addObject("personList", personsList);
     	m.addObject("personListSize", personsList.size());
-    	m.addObject("searchText", searchText);
+    	m.addObject("searchText", URLDecoder.decode(searchText, "UTF-8"));
     	return m;
     }
 
@@ -379,9 +380,10 @@ public class AnnuaireController {
     	 if (request.getParameter("searchText") == null || request.getParameter("searchText").equals("")){
     			return new ModelAndView("redirect:/annuaire/pagePrincipale");
     	    }
-    			return new ModelAndView("redirect:"+request.getParameter("searchText"));
+    	 
+    			return new ModelAndView("redirect:"+URLEncoder.encode(request.getParameter("searchText"), "UTF-8"));
 
-    	    }
+  }
     
     
     @RequestMapping(value = "/deconnexion", method = RequestMethod.GET)

@@ -620,8 +620,9 @@ public class PersonDaoBd implements IPersonDao {
 				g.setId(rs.getInt("groupe.id-groupe"));
 				g.setNomGroupe(rs.getString("groupe.nom-groupe"));
 				p.addToGroup(g);
+			}
 			personList.add(p);
-		}
+
 		
 		
 		}

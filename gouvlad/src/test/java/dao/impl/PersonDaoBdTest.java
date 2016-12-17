@@ -603,8 +603,6 @@ public class PersonDaoBdTest {
 		assertEquals(listPerson.get(1).getGroupe().getId(), 1);
 		assertEquals(listPerson.get(1).getGroupe().getNomGroupe(), "FSI");
 		
-		/*listPerson = dao.searchPersons("Ladet");
-		assertEquals(listPerson.size(), 1);*/
 	}
 
 

@@ -1,7 +1,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <c:set var="pageTitle" value="Edition du profil" scope="request" />
 <jsp:include page="entete_xhtml.jsp" />
-<form method="post" action="/gouvlad/annuaire/editerProfil">
+
 	<h1>Annuaire</h1>
 	<jsp:include page="menu.jsp" />
 	<h2>Edition du profil</h2>
@@ -11,7 +11,7 @@
 	<c:if test="${not empty success}">
 	Les modifications ont bien été enregistrées.
 	</c:if>
-
+<form method="post" action="/gouvlad/annuaire/editerProfil">
 	<table class="tableprofil">
 		<tr>
 			<td>Nom</td>
@@ -50,7 +50,8 @@
 		</tr>
 	</table>
 	<br /> <input type="submit" value="Modifier" />
+	
 </form>
-</br>
+<br />
 * Laisser ces champs vides pour ne pas les modifier.
 <jsp:include page="pied_xhtml.jsp" />

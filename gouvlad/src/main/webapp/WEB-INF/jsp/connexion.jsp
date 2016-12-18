@@ -12,8 +12,8 @@ Le couple adresse e-mail / mot de passe est incorrect.<br />
 Erreur: Les champs Adresse e-mail et Mot de passe ne peuvent pas être vides.<br />
 </c:if>
 <table class="noBorder">
-<tr><td>Adresse e-mail</td><td><input type="text" name="email"  /></td></tr><br />
-<tr><td>Mot de passe</td><td><input type="password" name="password"  /></td></tr><br />
+<tr><td>Adresse e-mail</td><td><input type="text" name="email"  /></td></tr>
+<tr><td>Mot de passe</td><td><input type="password" name="password"  /></td></tr>
 </table> <br/>
 <input type="submit" value="Connexion" />
 </form><br />

@@ -25,7 +25,6 @@ import bean.IPersonFactory;
 import bean.Person;
 import checker.IPersonDataChecker;
 import dao.IPersonDao;
-import dao.impl.InvalidURLException;
 import dao.impl.NotFoundPersonException;
 import web.PersonInfoException;
 import web.Utils;
@@ -153,7 +152,7 @@ public class AnnuaireController {
     
     @RequestMapping(value = "/inscription", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView handleSignupRequest(HttpServletRequest request,
-            HttpServletResponse response) throws ServletException, IOException, SQLException, NotFoundPersonException, ParseException, InvalidURLException {
+            HttpServletResponse response) throws ServletException, IOException, SQLException, NotFoundPersonException, ParseException {
     		
     		String salt = Utils.randomSalt(8);
     	

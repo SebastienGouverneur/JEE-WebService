@@ -16,7 +16,7 @@ public class Utils {
 			return session.getAttribute("Person") != null;
 		}
 		
-		public static String get_SHA_512_SecurePassword(String passwordToHash, String   salt) throws UnsupportedEncodingException{
+		public static String get_SHA_512_SecurePassword(String passwordToHash, String salt) throws UnsupportedEncodingException{
 			String generatedPassword = null;
 			    try {
 			         MessageDigest md = MessageDigest.getInstance("SHA-512");

@@ -27,7 +27,6 @@ import bean.IGroupFactory;
 import bean.IPersonFactory;
 import bean.Person;
 import dao.IPersonDao;
-import dao.impl.InvalidURLException;
 import dao.impl.NotFoundPersonException;
 import dao.impl.PersonDaoBdTest;
 
@@ -172,7 +171,7 @@ public class ControllerTest extends Mockito {
 	}
 	
 	@Test
-	public void testInscription() throws ServletException, IOException, SQLException, NotFoundPersonException, ParseException, InvalidURLException {
+	public void testInscription() throws ServletException, IOException, SQLException, NotFoundPersonException, ParseException {
 		HttpServletResponse response = mock(HttpServletResponse.class);
 		HttpServletRequest request = getNotConnectedUserHttpRequestMock();
 		when(request.getMethod()).thenReturn("GET");

@@ -15,7 +15,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import bean.Group;
@@ -29,6 +28,9 @@ import dao.impl.Resources;
 
 
 /**
+ * This class is an implementation of the IPersonDao interface.
+ * It is used to question the database in order to retrieve or store business informations.
+ * 
  * @authors Gabriel Ladet & Sébastien Gouverneur
  *
  */
@@ -473,6 +475,7 @@ public class PersonDaoBd implements IPersonDao {
 			st = connection.prepareStatement("DELETE FROM "+tableNameBelong+" WHERE `id-personne` = ?");
 			st.setInt(1, person.getId());
 			st.execute();
+			
 		}
 	}
 	
@@ -578,14 +581,43 @@ public class PersonDaoBd implements IPersonDao {
 		return connection;
 	}
 
+	/**
+	 * Overloaded method used to catch the data in the production tables 
+	 * and search persons in there.
+	 * 
+	 * @param searchText
+	 * @return the main method result searchPersons
+	 * @throws SQLException if an error occurs while polling the database
+	 */
 	public List<Person> searchPersons(String searchText) throws SQLException {
 		return searchPersons(searchText, Resources.getString("KeyPerson"), Resources.getString("KeyBelong"), Resources.getString("KeyGroup"));
 	}
 
+	/**
+	 * Overloaded method used to catch the data in the test tables 
+	 * and search persons in there.
+	 * 
+	 * @param searchText
+	 * @param test
+	 * @return the main method result searchPersons
+	 * @throws SQLException if an error occurs while polling the database
+	 */
 	public List<Person> searchPersons(String searchText, boolean test) throws SQLException {
 		return searchPersons(searchText, Resources.getString("KeyPersonTest"), Resources.getString("KeyBelongTest"), Resources.getString("KeyGroupTest"));
 	}
 	
+	/**
+	 * Searches all persons who correspond to the specified searched text. The search is carried out
+	 * on the following fields: lastname, firstname, email address, website url. It is not case sensitive.
+	 * If a search returns no result, then an empty list is returned by this method.
+	 * 
+	 * @param searchText
+	 * @param tableNamePerson
+	 * @param tableNameGroup
+	 * @param tableNameBelong
+	 * @throws SQLException if an error occurs while polling the database
+	 * @return a list of persons that correspond to the specified search terms.
+	 */
 	public List<Person> searchPersons(String searchText,
 							String tableNamePerson,
 							String tableNameBelong,

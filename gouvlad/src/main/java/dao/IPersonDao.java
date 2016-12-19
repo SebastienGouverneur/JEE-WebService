@@ -9,6 +9,12 @@ import bean.Person;
 import dao.impl.NotFoundPersonException;
 import bean.Group;
 
+/**
+ * This interface contains the different methods used by the application to access the database.
+ * @authors Sébastien Gouverneur & Gabriel Ladet
+ *
+ */
+
 public interface IPersonDao {
 	
 	List<Group> findAllGroups(boolean test) throws SQLException;

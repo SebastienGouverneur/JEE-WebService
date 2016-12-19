@@ -6,6 +6,12 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 import javax.servlet.http.HttpSession;
+/**
+ * This class provides various methods used in the application.
+ * @authors Sébastien Gouverneur & Gabriel Ladet
+ *
+ */
+
 
 public class Utils {
 	

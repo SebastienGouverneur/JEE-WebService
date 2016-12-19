@@ -4,6 +4,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * A group class that represents a group.
+ *  @authors Sébastien Gouverneur & Gabriel Ladet
+ */
 
 public class Group {
 	

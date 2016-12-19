@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.ParseException;
 import java.util.List;
 
@@ -29,6 +28,13 @@ import bean.Person;
 import dao.IPersonDao;
 import dao.impl.NotFoundPersonException;
 import dao.impl.PersonDaoBdTest;
+
+/**
+ * Test class for the controller.
+ *  @authors Sébastien Gouverneur & Gabriel Ladet
+ *
+ */
+
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/spring.xml")

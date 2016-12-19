@@ -27,7 +27,11 @@ import dao.IPersonDao;
 import dao.impl.NotFoundPersonException;
 
 
-
+/**
+ * Test class for DAO
+ *  @authors Sébastien Gouverneur & Gabriel Ladet
+ *
+ */
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/spring.xml")

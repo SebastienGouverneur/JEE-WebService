@@ -7,12 +7,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.ModelAndView;
-
 import bean.Person;
 import checker.IPersonDataChecker;
 import web.PersonInfoException;
 
+/**
+ * This class is an implementation of the IPersonDataChecker service
+ *  @authors Sébastien Gouverneur & Gabriel Ladet
+ *
+ */
 @Service
 public class PersonDataChecker implements IPersonDataChecker {
 

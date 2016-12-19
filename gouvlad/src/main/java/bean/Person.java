@@ -1,5 +1,11 @@
 package bean;
 
+/**
+ * A person class that represents a person.
+ *  @authors Sébastien Gouverneur & Gabriel Ladet
+ */
+
+
 public class Person {
 	
 	private int id;

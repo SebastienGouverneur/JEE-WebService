@@ -11,7 +11,8 @@ import bean.Group;
 
 /**
  * This interface contains the different methods used by the application to access the database.
- * @authors Sébastien Gouverneur & Gabriel Ladet
+ * @author Sébastien Gouverneur
+ * @author Gabriel Ladet
  *
  */
 

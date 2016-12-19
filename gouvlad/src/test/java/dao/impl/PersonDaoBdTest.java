@@ -29,7 +29,8 @@ import dao.impl.NotFoundPersonException;
 
 /**
  * Test class for DAO
- *  @authors Sébastien Gouverneur & Gabriel Ladet
+ *  @author Sébastien Gouverneur
+ *  @author Gabriel Ladet
  *
  */
 

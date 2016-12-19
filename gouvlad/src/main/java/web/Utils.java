@@ -8,7 +8,8 @@ import java.security.SecureRandom;
 import javax.servlet.http.HttpSession;
 /**
  * This class provides various methods used in the application.
- * @authors Sébastien Gouverneur & Gabriel Ladet
+ * @author Sébastien Gouverneur
+ * @author Gabriel Ladet
  *
  */
 

@@ -2,7 +2,8 @@ package bean;
 
 /**
  * A person class that represents a person.
- *  @authors Sébastien Gouverneur & Gabriel Ladet
+ *  @author Sébastien Gouverneur
+ *  @author Gabriel Ladet
  */
 
 

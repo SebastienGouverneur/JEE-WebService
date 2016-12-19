@@ -3,7 +3,8 @@ package dao.impl;
 /**
  * This Exception is thrown when a database request doesn't return any person.
  * 
- * @author Sébastien Gouverneur & Gabriel Ladet
+ * @author Sébastien Gouverneur
+ * @author Gabriel Ladet
  *
  */
 @SuppressWarnings("serial")

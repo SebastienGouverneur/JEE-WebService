@@ -5,7 +5,8 @@ import java.util.ResourceBundle;
 
 /**
  * This class is used to access to the external strings located in the messages.properties file.
- * @authors Sébastien Gouverneur & Gabriel Ladet
+ * @author Sébastien Gouverneur
+ * @author Gabriel Ladet
  */
 
 public class Resources {

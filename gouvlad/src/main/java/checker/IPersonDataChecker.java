@@ -5,7 +5,8 @@ import web.PersonInfoException;
 
 /**
  * This interface contains the different methods used by the application to check the user's inputs validity.
- *  @authors Sébastien Gouverneur & Gabriel Ladet
+ *  @author Sébastien Gouverneur 
+ *  @author Gabriel Ladet
  *
  */
 public interface IPersonDataChecker {

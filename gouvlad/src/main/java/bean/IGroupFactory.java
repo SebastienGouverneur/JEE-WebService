@@ -3,8 +3,8 @@ package bean;
 
 /**
  * A group factory interface that delegates the Group object instantiation to the Spring container.
- *  @authors Sébastien Gouverneur & Gabriel Ladet
- *	@see spring.xml
+ *  @author Sébastien Gouverneur
+ *  @author Gabriel Ladet
  */
 
 public interface IGroupFactory {

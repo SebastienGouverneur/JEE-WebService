@@ -5,8 +5,8 @@ import bean.Person;
 
 /**
  * A person factory that delegates the Person object instantiations to the Spring container.
- *  @authors Sébastien Gouverneur & Gabriel Ladet
- *	@see spring.xml
+ *  @author Sébastien Gouverneur
+ *  @author Gabriel Ladet
  */
 
 public abstract class PersonFactory implements IPersonFactory {

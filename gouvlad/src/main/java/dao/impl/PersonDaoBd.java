@@ -31,7 +31,8 @@ import dao.impl.Resources;
  * This class is an implementation of the IPersonDao interface.
  * It is used to question the database in order to retrieve or store business informations.
  * 
- * @authors Gabriel Ladet & Sébastien Gouverneur
+ * @author Gabriel Ladet
+ * @author Sébastien Gouverneur
  *
  */
 @Service
@@ -372,7 +373,6 @@ public class PersonDaoBd implements IPersonDao {
 	 * and save a specific person in there
 	 * 
 	 * @param person
-	 * @return the main method savePerson(Personne, AppartenancePersonneGroupe, Groupe, false)
 	 * @throws SQLException if an error occurs while polling the database
 	 */
 	public void savePerson(Person person) throws SQLException, ParseException {
@@ -388,7 +388,6 @@ public class PersonDaoBd implements IPersonDao {
 	 * and save a specific person in there
 	 * 
 	 * @param person
-	 * @return the main method savePerson(PersonneTest, AppartenancePersonneGroupeTest, GroupeTest, true)
 	 * @throws SQLException if an error occurs while polling the database
 	 */
 	public void savePerson(Person person, boolean test) throws SQLException, ParseException{
@@ -484,7 +483,6 @@ public class PersonDaoBd implements IPersonDao {
 	 * and find all the persons in there
 	 * 
 	 * @param group
-	 * @return the main method savePerson(Groupe, AppartenancePersonneGroupe)
 	 * @throws SQLException if an error occurs while polling the database
 	 */
 	public void saveGroup(Group group) throws SQLException {
@@ -498,7 +496,6 @@ public class PersonDaoBd implements IPersonDao {
 	 * 
 	 * @param group
 	 * @param test
-	 * @return the main method savePerson(GroupeTest, AppartenancePersonneGroupeTest)
 	 * @throws SQLException if an error occurs while polling the database
 	 */
 	public void saveGroup(Group group, boolean test) throws SQLException{

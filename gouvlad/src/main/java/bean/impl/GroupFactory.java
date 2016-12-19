@@ -5,8 +5,8 @@ import bean.IGroupFactory;
 
 /**
  * A group factory that delegates the Group object instantiation to the Spring container.
- *  @authors Sébastien Gouverneur & Gabriel Ladet
- *	@see spring.xml
+ *  @author Sébastien Gouverneur 
+ *  @author Gabriel Ladet
  */
 public abstract class GroupFactory implements IGroupFactory {
 	

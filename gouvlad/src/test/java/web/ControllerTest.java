@@ -31,7 +31,8 @@ import dao.impl.PersonDaoBdTest;
 
 /**
  * Test class for the controller.
- *  @authors Sébastien Gouverneur & Gabriel Ladet
+ *  @author Sébastien Gouverneur
+ *  @author Gabriel Ladet
  *
  */
 

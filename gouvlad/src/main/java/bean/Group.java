@@ -6,7 +6,8 @@ import java.util.List;
 
 /**
  * A group class that represents a group.
- *  @authors Sébastien Gouverneur & Gabriel Ladet
+ *  @author Sébastien Gouverneur
+ *  @author Gabriel Ladet
  */
 
 public class Group {

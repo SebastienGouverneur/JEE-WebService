@@ -2,8 +2,9 @@ package bean;
 
 /**
  * A person factory interface that delegates the person object instantiations to the Spring container.
- *  @authors Sébastien Gouverneur & Gabriel Ladet
- *	@see spring.xml
+ *  @author Sébastien Gouverneur
+ *  @author Gabriel Ladet
+ *	
  */
 
 public interface IPersonFactory {

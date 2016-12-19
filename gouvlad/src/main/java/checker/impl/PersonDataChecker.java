@@ -13,7 +13,8 @@ import web.PersonInfoException;
 
 /**
  * This class is an implementation of the IPersonDataChecker service
- *  @authors Sébastien Gouverneur & Gabriel Ladet
+ *  @author Sébastien Gouverneur
+ *  @author Gabriel Ladet
  *
  */
 @Service

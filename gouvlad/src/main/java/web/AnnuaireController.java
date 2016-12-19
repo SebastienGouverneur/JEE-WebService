@@ -33,7 +33,8 @@ import web.Utils;
  * This class is the uniq controller of the application.
  * It contains the methods associated with the URL wanted by the user. (Also depending of the HTTP method used)
  * Each method has to perform operations (like DAO integration or POST data treatment) and return the correct view.
- *  @authors Sébastien Gouverneur & Gabriel Ladet
+ *  @author Sébastien Gouverneur
+ *  @author Gabriel Ladet
  *
  */
 @Controller

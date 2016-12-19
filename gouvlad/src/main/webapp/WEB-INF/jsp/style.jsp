@@ -80,8 +80,9 @@ text-decoration: underline;
 	font-weight: bold;
 }
 
-.tableListing 
+.tableGroupListing 
 {
+width: 400px;
 }
 
 .tableListing tr:hover.clickable td

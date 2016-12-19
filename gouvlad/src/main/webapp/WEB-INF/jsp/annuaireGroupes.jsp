@@ -4,7 +4,7 @@
 <h1>Annuaire</h1>  
 <jsp:include page="menu.jsp" />
 <h2>Liste des groupes</h2>
-<table>
+<table class="tableGroupListing">
 <c:forEach var="group" items="${groupList}">
 <tr><td>${group.nomGroupe}</td></tr>
 </c:forEach>
